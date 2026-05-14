@@ -87,6 +87,7 @@ class ProductResponse(BaseModel):
     discount_price: Decimal | None
     stock_quantity: int
     sku: str
+    is_active: bool
     category_id: int
     brand_id: int
     created_at: datetime

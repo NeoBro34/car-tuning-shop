@@ -57,7 +57,7 @@ def admin_token(db_session: Session) -> str:
         email="admin@example.com",
         full_name="Admin User",
         hashed_password=hash_password("strongpass123"),
-        role="admin",
+        role="ADMIN",
         is_active=True,
     )
     db_session.add(admin)
@@ -69,4 +69,3 @@ def admin_token(db_session: Session) -> str:
 @pytest.fixture
 def admin_headers(admin_token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {admin_token}"}
-

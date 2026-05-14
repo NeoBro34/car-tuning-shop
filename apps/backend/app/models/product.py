@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, String, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -18,6 +18,7 @@ class Product(Base):
     discount_price: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     stock_quantity: Mapped[int] = mapped_column(Integer, default=0)
     sku: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), index=True)
     brand_id: Mapped[int] = mapped_column(ForeignKey("brands.id"), index=True)
     created_at: Mapped[datetime] = mapped_column(

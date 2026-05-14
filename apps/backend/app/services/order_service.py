@@ -13,6 +13,7 @@ from app.schemas.order import (
     OrderListResponse,
     OrderStatusUpdate,
 )
+from app.schemas.user import UserRole
 
 
 class OrderService:
@@ -51,7 +52,8 @@ class OrderService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Order not found",
             )
-        if order.user_id != current_user.id and current_user.role != "admin":
+        admin_roles = {UserRole.ADMIN.value, UserRole.SUPER_ADMIN.value, "admin"}
+        if order.user_id != current_user.id and current_user.role not in admin_roles:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Order not found",

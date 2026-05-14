@@ -212,6 +212,67 @@ DELIVERED
 CANCELLED
 ```
 
+## Phase 6
+
+Implemented module:
+
+- admin
+
+Admin module includes:
+
+- role-based access control
+- reusable permission dependencies
+- admin-only routes
+- service layer
+- repository layer
+- schemas
+- Alembic migration
+- dashboard totals
+- admin product management
+- admin order management
+- admin user management
+
+User roles:
+
+```text
+USER
+ADMIN
+SUPER_ADMIN
+```
+
+Admin dashboard returns:
+
+```text
+total_users
+total_products
+total_orders
+total_revenue
+```
+
+Admin product management:
+
+- update stock
+- activate/deactivate product
+- delete product
+
+Admin order management:
+
+- list all orders
+- update order status
+
+Admin user management:
+
+- list users
+- get user detail
+- block users
+- unblock users
+
+Security:
+
+- only `ADMIN` and `SUPER_ADMIN` can access `/api/v1/admin/*`
+- normal `USER` accounts receive `403`
+- blocked users cannot login
+
 ## Models
 
 Tables added:
@@ -250,7 +311,7 @@ id, brand_id, name, slug, year_start, year_end, is_active, created_at, updated_a
 
 ```text
 id, name, slug, description, price, discount_price, stock_quantity, sku,
-category_id, brand_id, created_at, updated_at
+is_active, category_id, brand_id, created_at, updated_at
 ```
 
 `product_images` fields:
@@ -358,6 +419,21 @@ GET    /api/v1/orders/{id}
 PUT    /api/v1/orders/{id}/status
 ```
 
+Admin:
+
+```text
+GET    /api/v1/admin/dashboard
+GET    /api/v1/admin/users
+GET    /api/v1/admin/users/{id}
+PUT    /api/v1/admin/users/{id}/block
+PUT    /api/v1/admin/users/{id}/unblock
+GET    /api/v1/admin/orders
+PUT    /api/v1/admin/orders/{id}/status
+PUT    /api/v1/admin/products/{id}/stock
+PUT    /api/v1/admin/products/{id}/active
+DELETE /api/v1/admin/products/{id}
+```
+
 ## Pagination
 
 List endpoints support:
@@ -412,6 +488,8 @@ Authorization: Bearer <token>
 Order create, history, and detail endpoints require an authenticated active
 user. Order status updates require admin token.
 
+Admin endpoints require `ADMIN` or `SUPER_ADMIN` role.
+
 ## Image Uploads
 
 Product images are uploaded with multipart form-data.
@@ -454,6 +532,7 @@ Migration files:
 202605150003_create_products_tables.py
 202605150004_create_cart_items_table.py
 202605150005_create_orders_tables.py
+202605150006_add_admin_role_and_product_active.py
 ```
 
 Run migrations:
@@ -473,7 +552,7 @@ alembic heads
 Expected:
 
 ```text
-202605150005
+202605150006
 ```
 
 ## Run Backend
@@ -503,7 +582,7 @@ pytest tests
 Current result:
 
 ```text
-14 passed
+17 passed
 ```
 
 Tested:
@@ -540,6 +619,12 @@ Tested:
 - order history
 - order detail
 - admin order status update
+- admin dashboard
+- admin route permission checks
+- admin user list/detail/block/unblock
+- admin product stock update
+- admin product activate/deactivate
+- admin all-orders list
 
 ## Postman Test
 
@@ -691,6 +776,45 @@ GET /api/v1/products/1
 
 Cart should be empty and product `stock_quantity` should be decreased.
 
+13. Test admin dashboard:
+
+```text
+GET /api/v1/admin/dashboard
+```
+
+14. Test admin product stock update:
+
+```text
+PUT /api/v1/admin/products/1/stock
+```
+
+Example body:
+
+```json
+{
+  "stock_quantity": 10
+}
+```
+
+15. Test admin user block:
+
+```text
+PUT /api/v1/admin/users/2/block
+PUT /api/v1/admin/users/2/unblock
+```
+
+16. Test permission with normal user token:
+
+```text
+GET /api/v1/admin/dashboard
+```
+
+Expected:
+
+```text
+403 Forbidden
+```
+
 ## Swagger Test
 
 1. Run backend:
@@ -729,4 +853,42 @@ POST /api/v1/orders
 GET /api/v1/orders
 GET /api/v1/orders/{order_id}
 PUT /api/v1/orders/{order_id}/status
+```
+
+6. Test admin endpoints:
+
+```text
+GET /api/v1/admin/dashboard
+GET /api/v1/admin/users
+GET /api/v1/admin/orders
+PUT /api/v1/admin/orders/{order_id}/status
+PUT /api/v1/admin/products/{product_id}/stock
+```
+
+## Create Admin User
+
+Use this local script after migrations:
+
+```bash
+cd apps/backend
+source venv/bin/activate
+python - <<'PY'
+from app.core.database import SessionLocal
+from app.core.security import hash_password
+from app.models.user import User
+
+db = SessionLocal()
+try:
+    admin = User(
+        email="admin@example.com",
+        full_name="Admin User",
+        hashed_password=hash_password("strongpass123"),
+        role="ADMIN",
+        is_active=True,
+    )
+    db.add(admin)
+    db.commit()
+finally:
+    db.close()
+PY
 ```

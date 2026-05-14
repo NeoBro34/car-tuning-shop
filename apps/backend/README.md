@@ -10,6 +10,8 @@ Phase 4 adds authenticated cart management with stock validation and cart
 totals.
 Phase 5 adds checkout orders, order items, stock decrement, order history,
 order details, and admin order status updates.
+Phase 6 adds admin dashboard, role-based access control, admin user/order/product
+management, and user blocking.
 
 ## Local setup
 
@@ -238,3 +240,69 @@ Postman order flow:
 6. Verify product stock decreased with `GET /api/v1/products/{product_id}`.
 7. Login as admin and set `Authorization: Bearer {{admin_token}}`.
 8. Update status with `PUT /api/v1/orders/{order_id}/status`.
+
+## Phase 6 admin
+
+Admin roles:
+
+```text
+USER
+ADMIN
+SUPER_ADMIN
+```
+
+Admin-only endpoints:
+
+- `GET /api/v1/admin/dashboard`
+- `GET /api/v1/admin/users`
+- `GET /api/v1/admin/users/{user_id}`
+- `PUT /api/v1/admin/users/{user_id}/block`
+- `PUT /api/v1/admin/users/{user_id}/unblock`
+- `GET /api/v1/admin/orders`
+- `PUT /api/v1/admin/orders/{order_id}/status`
+- `PUT /api/v1/admin/products/{product_id}/stock`
+- `PUT /api/v1/admin/products/{product_id}/active`
+- `DELETE /api/v1/admin/products/{product_id}`
+
+Create an admin user locally:
+
+```bash
+cd apps/backend
+source venv/bin/activate
+python - <<'PY'
+from app.core.database import SessionLocal
+from app.core.security import hash_password
+from app.models.user import User
+
+db = SessionLocal()
+try:
+    admin = User(
+        email="admin@example.com",
+        full_name="Admin User",
+        hashed_password=hash_password("strongpass123"),
+        role="ADMIN",
+        is_active=True,
+    )
+    db.add(admin)
+    db.commit()
+finally:
+    db.close()
+PY
+```
+
+Swagger admin test flow:
+
+1. Run migrations with `alembic upgrade head`.
+2. Start API with `uvicorn app.main:app --reload`.
+3. Login as admin and authorize Swagger with `Bearer <admin_access_token>`.
+4. Open the `admin` tag and test dashboard, users, orders, and stock endpoints.
+5. Login as a normal user and verify admin endpoints return `403`.
+
+Postman admin flow:
+
+1. Login as admin and save `access_token` as `admin_token`.
+2. Set `Authorization: Bearer {{admin_token}}`.
+3. Call `GET /api/v1/admin/dashboard`.
+4. List users and block/unblock with `/api/v1/admin/users/{id}/block`.
+5. List all orders and update status with `/api/v1/admin/orders/{id}/status`.
+6. Update product stock with `/api/v1/admin/products/{id}/stock`.
