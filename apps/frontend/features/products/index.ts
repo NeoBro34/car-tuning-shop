@@ -1,4 +1,10 @@
-export { getBrands, getCategories, getProducts } from "./product.service";
+export {
+  getBrands,
+  getCategories,
+  getProductBySlug,
+  getProducts,
+  getRelatedProducts,
+} from "./product.service";
 export type {
   Brand,
   Category,
