@@ -1,39 +1,7 @@
-from collections.abc import Generator
-
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.pool import StaticPool
-
-from app.core.database import Base, get_db
-from app.main import app
-
-engine = create_engine(
-    "sqlite://",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
-def override_get_db() -> Generator[Session, None, None]:
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
-client = TestClient(app)
-
-
-def setup_function() -> None:
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-
-
-def test_register_login_and_me() -> None:
+def test_register_login_and_me(client: TestClient) -> None:
     register_response = client.post(
         "/api/v1/auth/register",
         json={
@@ -66,7 +34,7 @@ def test_register_login_and_me() -> None:
     assert me_response.json()["email"] == "driver@example.com"
 
 
-def test_duplicate_register_returns_conflict() -> None:
+def test_duplicate_register_returns_conflict(client: TestClient) -> None:
     payload = {
         "email": "duplicate@example.com",
         "password": "strongpass123",
@@ -77,7 +45,7 @@ def test_duplicate_register_returns_conflict() -> None:
     assert client.post("/api/v1/auth/register", json=payload).status_code == 409
 
 
-def test_login_rejects_wrong_password() -> None:
+def test_login_rejects_wrong_password(client: TestClient) -> None:
     client.post(
         "/api/v1/auth/register",
         json={
@@ -92,4 +60,3 @@ def test_login_rejects_wrong_password() -> None:
     )
 
     assert response.status_code == 401
-
