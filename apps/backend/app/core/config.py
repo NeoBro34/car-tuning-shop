@@ -14,6 +14,7 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES = int(
         os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60")
     )
+    UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 
     @cached_property
     def is_default_secret(self) -> bool:
@@ -21,4 +22,3 @@ class Settings:
 
 
 settings = Settings()
-

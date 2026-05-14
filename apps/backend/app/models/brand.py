@@ -22,4 +22,4 @@ class Brand(Base):
     )
 
     car_models = relationship("CarModel", back_populates="brand")
-
+    products = relationship("Product", back_populates="brand")
