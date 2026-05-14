@@ -1,2 +1,11 @@
-export { getProducts } from "@/services/products.service";
-export type { Product } from "@/types/product";
+export { getBrands, getCategories, getProducts } from "./product.service";
+export type {
+  Brand,
+  Category,
+  ListMeta,
+  ListResponse,
+  Product,
+  ProductFilters,
+  ProductImage,
+  ProductQueryParams,
+} from "./product.types";
