@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const protectedRoutes = ["/cart", "/checkout", "/admin"];
+const protectedRoutes = ["/cart", "/checkout", "/orders/success", "/admin"];
 const authRoutes = ["/login", "/register"];
 
 export function proxy(request: NextRequest) {
@@ -29,6 +29,7 @@ export const config = {
   matcher: [
     "/cart/:path*",
     "/checkout/:path*",
+    "/orders/success",
     "/admin/:path*",
     "/login",
     "/register",

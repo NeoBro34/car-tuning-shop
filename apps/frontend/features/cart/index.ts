@@ -1,2 +1,14 @@
 export { useCartStore } from "@/store/cart-store";
-export type { CartItem } from "@/types/cart";
+export {
+  addCartItem,
+  getCart,
+  removeCartItem,
+  updateCartItem,
+} from "./cart.service";
+export type {
+  AddCartItemPayload,
+  CartItem,
+  CartProduct,
+  CartResponse,
+  UpdateCartItemPayload,
+} from "@/types/cart";

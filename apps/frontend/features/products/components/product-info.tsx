@@ -36,13 +36,17 @@ export function ProductInfo({
   const isOutOfStock = product.stock_quantity <= 0;
   const activePrice = product.discount_price ?? product.price;
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (isOutOfStock) {
       return;
     }
 
-    addItem(product, quantity);
-    toast.success("Product added to cart");
+    try {
+      await addItem(product, quantity);
+      toast.success("Product added to cart");
+    } catch {
+      toast.error("Could not add product to cart");
+    }
   }
 
   return (

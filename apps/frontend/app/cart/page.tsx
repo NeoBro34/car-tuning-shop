@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/layout/page-header";
+import { CartPage as CartFeaturePage } from "@/features/cart/components/cart-page";
 
 export const metadata: Metadata = {
   title: "Cart",
@@ -7,11 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function CartPage() {
-  return (
-    <PageHeader
-      eyebrow="Shopping cart"
-      title="Cart"
-      description="Cart items, quantity controls, totals, and checkout navigation will be implemented here."
-    />
-  );
+  return <CartFeaturePage />;
 }
