@@ -169,6 +169,49 @@ Cart business rules:
 - users cannot add or update quantity above `product.stock_quantity`
 - users can only access their own cart items
 
+## Phase 5
+
+Implemented modules:
+
+- orders
+- order_items
+
+Orders module includes:
+
+- SQLAlchemy `Order` and `OrderItem` models
+- Pydantic request/response schemas
+- repository layer for order queries and persistence
+- service layer for checkout business logic
+- CRUD API under `/api/v1/orders`
+- Alembic migration
+- create order from current user cart
+- move cart items into `order_items`
+- calculate `total_price`
+- decrease product stock
+- clear cart after successful order
+- order history
+- order detail
+- admin order status updates
+
+Order business rules:
+
+- checkout requires authentication
+- checkout fails if cart is empty
+- checkout fails if any cart item quantity exceeds current product stock
+- checkout stores the current product sale price in `order_items.price`
+- customers can only view their own orders
+- admins can update order status
+
+Supported order statuses:
+
+```text
+PENDING
+CONFIRMED
+SHIPPED
+DELIVERED
+CANCELLED
+```
+
 ## Models
 
 Tables added:
@@ -181,6 +224,8 @@ car_models
 products
 product_images
 cart_items
+orders
+order_items
 ```
 
 `categories` fields:
@@ -218,6 +263,19 @@ id, product_id, image_url, is_main
 
 ```text
 id, user_id, product_id, quantity, created_at
+```
+
+`orders` fields:
+
+```text
+id, user_id, status, total_price, customer_name, phone_number, address,
+created_at, updated_at
+```
+
+`order_items` fields:
+
+```text
+id, order_id, product_id, quantity, price, subtotal
 ```
 
 ## API Endpoints
@@ -291,6 +349,15 @@ PUT    /api/v1/cart/{item_id}
 DELETE /api/v1/cart/{item_id}
 ```
 
+Orders:
+
+```text
+POST   /api/v1/orders
+GET    /api/v1/orders
+GET    /api/v1/orders/{id}
+PUT    /api/v1/orders/{id}/status
+```
+
 ## Pagination
 
 List endpoints support:
@@ -342,6 +409,9 @@ Cart endpoints require any authenticated active user:
 Authorization: Bearer <token>
 ```
 
+Order create, history, and detail endpoints require an authenticated active
+user. Order status updates require admin token.
+
 ## Image Uploads
 
 Product images are uploaded with multipart form-data.
@@ -383,6 +453,7 @@ Migration files:
 202605150002_create_catalog_lookup_tables.py
 202605150003_create_products_tables.py
 202605150004_create_cart_items_table.py
+202605150005_create_orders_tables.py
 ```
 
 Run migrations:
@@ -402,7 +473,7 @@ alembic heads
 Expected:
 
 ```text
-202605150004
+202605150005
 ```
 
 ## Run Backend
@@ -432,7 +503,7 @@ pytest tests
 Current result:
 
 ```text
-11 passed
+14 passed
 ```
 
 Tested:
@@ -461,6 +532,14 @@ Tested:
 - update quantity
 - remove item
 - user cart isolation
+- checkout from cart
+- order item creation
+- product stock decrease
+- cart clear after checkout
+- insufficient stock checkout prevention
+- order history
+- order detail
+- admin order status update
 
 ## Postman Test
 
@@ -566,6 +645,52 @@ GET /api/v1/products/1
 GET /api/v1/products/slug/hks-hi-power-exhaust
 ```
 
+9. Test checkout:
+
+```text
+POST /api/v1/orders
+```
+
+Example checkout body:
+
+```json
+{
+  "customer_name": "Ali Valiyev",
+  "phone_number": "+998901234567",
+  "address": "Tashkent, Amir Temur street 1"
+}
+```
+
+10. Test order history and detail:
+
+```text
+GET /api/v1/orders
+GET /api/v1/orders/1
+```
+
+11. Test admin status update:
+
+```text
+PUT /api/v1/orders/1/status
+```
+
+Example status body:
+
+```json
+{
+  "status": "CONFIRMED"
+}
+```
+
+12. Verify checkout side effects:
+
+```text
+GET /api/v1/cart/
+GET /api/v1/products/1
+```
+
+Cart should be empty and product `stock_quantity` should be decreased.
+
 ## Swagger Test
 
 1. Run backend:
@@ -595,4 +720,13 @@ POST /api/v1/cart/add
 GET /api/v1/cart/
 PUT /api/v1/cart/{item_id}
 DELETE /api/v1/cart/{item_id}
+```
+
+5. Test order endpoints:
+
+```text
+POST /api/v1/orders
+GET /api/v1/orders
+GET /api/v1/orders/{order_id}
+PUT /api/v1/orders/{order_id}/status
 ```

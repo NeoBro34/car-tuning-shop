@@ -8,6 +8,8 @@ Phase 3 adds products, product images, filters, local image uploads, and
 static file serving.
 Phase 4 adds authenticated cart management with stock validation and cart
 totals.
+Phase 5 adds checkout orders, order items, stock decrement, order history,
+order details, and admin order status updates.
 
 ## Local setup
 
@@ -170,3 +172,69 @@ Postman cart flow:
 5. Read the cart with `GET /api/v1/cart/`.
 6. Update quantity with `PUT /api/v1/cart/{item_id}`.
 7. Remove the item with `DELETE /api/v1/cart/{item_id}`.
+
+## Phase 5 orders
+
+Authenticated order endpoints:
+
+- `POST /api/v1/orders`
+- `GET /api/v1/orders?limit=20&offset=0`
+- `GET /api/v1/orders/{order_id}`
+
+Admin-only endpoint:
+
+- `PUT /api/v1/orders/{order_id}/status`
+
+Example checkout body:
+
+```json
+{
+  "customer_name": "Ali Valiyev",
+  "phone_number": "+998901234567",
+  "address": "Tashkent, Amir Temur street 1"
+}
+```
+
+Example status update body:
+
+```json
+{
+  "status": "CONFIRMED"
+}
+```
+
+Supported statuses:
+
+```text
+PENDING
+CONFIRMED
+SHIPPED
+DELIVERED
+CANCELLED
+```
+
+Checkout creates an order from the current user's cart, moves cart items into
+`order_items`, calculates `total_price`, decreases product stock, and clears
+the cart after a successful transaction. Checkout fails if any cart quantity is
+above current product stock.
+
+Swagger checkout flow:
+
+1. Start the API with `uvicorn app.main:app --reload`.
+2. Open `http://127.0.0.1:8000/docs`.
+3. Authorize with `Bearer <customer_access_token>`.
+4. Add product to cart with `POST /api/v1/cart/add`.
+5. Create order with `POST /api/v1/orders`.
+6. Check order history and detail with `GET /api/v1/orders`.
+7. Authorize as admin and update status with `PUT /api/v1/orders/{order_id}/status`.
+
+Postman order flow:
+
+1. Login as customer and set `Authorization: Bearer {{customer_token}}`.
+2. Add a product to cart.
+3. Send `POST /api/v1/orders` with checkout body.
+4. Verify `total_price`, `items`, and `status = PENDING`.
+5. Verify cart is empty with `GET /api/v1/cart/`.
+6. Verify product stock decreased with `GET /api/v1/products/{product_id}`.
+7. Login as admin and set `Authorization: Bearer {{admin_token}}`.
+8. Update status with `PUT /api/v1/orders/{order_id}/status`.
