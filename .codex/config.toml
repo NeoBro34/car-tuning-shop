@@ -1,0 +1,34 @@
+model = "gpt-5"
+temperature = 0.1
+max_tokens = 6000
+
+[project]
+name = "car-tuning-shop"
+type = "fullstack"
+description = "Car tuning parts e-commerce website"
+
+[frontend]
+framework = "nextjs"
+language = "typescript"
+style = "tailwind"
+app_dir = "apps/frontend"
+
+[backend]
+framework = "fastapi"
+language = "python"
+app_dir = "apps/backend"
+
+[database]
+type = "postgresql"
+orm = "sqlalchemy"
+migration = "alembic"
+
+[architecture]
+pattern = "clean-architecture"
+backend_flow = "route-service-repository-database"
+
+[rules]
+strict_types = true
+tests_required = true
+docs_required = true
+security_required = true
