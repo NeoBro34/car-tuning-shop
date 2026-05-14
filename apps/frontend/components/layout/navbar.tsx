@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthNav } from "@/features/auth/components/auth-nav";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -27,6 +28,7 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
+          <AuthNav />
         </div>
       </nav>
     </header>

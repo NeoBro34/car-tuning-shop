@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/layout/page-header";
+import { Suspense } from "react";
+import { AuthCard } from "@/features/auth/components/auth-card";
+import { LoginForm } from "@/features/auth/components/login-form";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -8,10 +10,13 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <PageHeader
-      eyebrow="Account"
+    <AuthCard
+      description="Access your account to manage cart and orders."
       title="Login"
-      description="Authentication form and JWT session handling will be implemented here."
-    />
+    >
+      <Suspense fallback={<div className="h-56 animate-pulse rounded-md bg-zinc-100" />}>
+        <LoginForm />
+      </Suspense>
+    </AuthCard>
   );
 }
