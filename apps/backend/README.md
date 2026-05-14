@@ -6,6 +6,8 @@ Phase 2 adds categories, brands, and car models CRUD APIs with admin-only
 write endpoints and paginated list responses.
 Phase 3 adds products, product images, filters, local image uploads, and
 static file serving.
+Phase 4 adds authenticated cart management with stock validation and cart
+totals.
 
 ## Local setup
 
@@ -120,3 +122,51 @@ Postman product flow:
 5. Create a product with `POST /api/v1/products`.
 6. Upload images with form-data: key `files`, type `File`, add multiple rows.
 7. Open the returned `image_url` in the browser to verify static file serving.
+
+## Phase 4 cart
+
+Authenticated cart endpoints:
+
+- `POST /api/v1/cart/add`
+- `GET /api/v1/cart/`
+- `PUT /api/v1/cart/{item_id}`
+- `DELETE /api/v1/cart/{item_id}`
+
+Example add body:
+
+```json
+{
+  "product_id": 1,
+  "quantity": 2
+}
+```
+
+Example update body:
+
+```json
+{
+  "quantity": 3
+}
+```
+
+Cart responses include `items`, `subtotal`, and `total_items`. If the same
+product is added again, its cart quantity is increased. Quantity cannot exceed
+the product stock.
+
+Swagger flow:
+
+1. Start the API with `uvicorn app.main:app --reload`.
+2. Open `http://127.0.0.1:8000/docs`.
+3. Authorize with `Bearer <access_token>`.
+4. Create a product or use an existing one.
+5. Test add, get, update, and delete under the `cart` tag.
+
+Postman cart flow:
+
+1. Login with `POST /api/v1/auth/login`.
+2. Save `access_token` as `token`.
+3. Set `Authorization: Bearer {{token}}`.
+4. Add an item with `POST /api/v1/cart/add`.
+5. Read the cart with `GET /api/v1/cart/`.
+6. Update quantity with `PUT /api/v1/cart/{item_id}`.
+7. Remove the item with `DELETE /api/v1/cart/{item_id}`.

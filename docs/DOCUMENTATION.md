@@ -140,6 +140,35 @@ Public product endpoints:
 - product detail by id
 - product detail by slug
 
+## Phase 4
+
+Implemented module:
+
+- cart
+
+Cart module includes:
+
+- SQLAlchemy `CartItem` model
+- Pydantic request/response schemas
+- repository layer for cart queries
+- service layer for cart business logic
+- CRUD API under `/api/v1/cart`
+- Alembic migration
+- add to cart
+- get current user cart
+- update item quantity
+- remove item
+- subtotal calculation
+- total items calculation
+- stock validation
+- authenticated users only
+
+Cart business rules:
+
+- if product already exists in cart, new quantity is added to existing quantity
+- users cannot add or update quantity above `product.stock_quantity`
+- users can only access their own cart items
+
 ## Models
 
 Tables added:
@@ -151,6 +180,7 @@ brands
 car_models
 products
 product_images
+cart_items
 ```
 
 `categories` fields:
@@ -182,6 +212,12 @@ category_id, brand_id, created_at, updated_at
 
 ```text
 id, product_id, image_url, is_main
+```
+
+`cart_items` fields:
+
+```text
+id, user_id, product_id, quantity, created_at
 ```
 
 ## API Endpoints
@@ -246,6 +282,15 @@ GET /api/v1/products?min_price=100&max_price=1000
 GET /api/v1/products?search=exhaust&category_id=1&brand_id=1&min_price=100&max_price=1000
 ```
 
+Cart:
+
+```text
+POST   /api/v1/cart/add
+GET    /api/v1/cart/
+PUT    /api/v1/cart/{item_id}
+DELETE /api/v1/cart/{item_id}
+```
+
 ## Pagination
 
 List endpoints support:
@@ -277,7 +322,7 @@ Response:
 
 ## Admin Access
 
-Create, update, delete endpoints require admin token.
+Create, update, delete endpoints for admin-managed resources require admin token.
 
 Header:
 
@@ -289,6 +334,12 @@ User must have:
 
 ```text
 role = "admin"
+```
+
+Cart endpoints require any authenticated active user:
+
+```text
+Authorization: Bearer <token>
 ```
 
 ## Image Uploads
@@ -331,6 +382,7 @@ Migration files:
 202605150001_create_users_table.py
 202605150002_create_catalog_lookup_tables.py
 202605150003_create_products_tables.py
+202605150004_create_cart_items_table.py
 ```
 
 Run migrations:
@@ -350,7 +402,7 @@ alembic heads
 Expected:
 
 ```text
-202605150003
+202605150004
 ```
 
 ## Run Backend
@@ -380,7 +432,7 @@ pytest tests
 Current result:
 
 ```text
-8 passed
+11 passed
 ```
 
 Tested:
@@ -402,6 +454,13 @@ Tested:
 - stock validation
 - product image upload
 - static image serving
+- cart authentication
+- add to cart and existing item quantity increase
+- cart subtotal and total items
+- cart stock validation
+- update quantity
+- remove item
+- user cart isolation
 
 ## Postman Test
 
@@ -505,4 +564,35 @@ GET /api/v1/car-models
 GET /api/v1/products
 GET /api/v1/products/1
 GET /api/v1/products/slug/hks-hi-power-exhaust
+```
+
+## Swagger Test
+
+1. Run backend:
+
+```bash
+cd apps/backend
+source venv/bin/activate
+uvicorn app.main:app --reload
+```
+
+2. Open Swagger:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+3. Use `Authorize` with:
+
+```text
+Bearer <access_token>
+```
+
+4. Test cart endpoints:
+
+```text
+POST /api/v1/cart/add
+GET /api/v1/cart/
+PUT /api/v1/cart/{item_id}
+DELETE /api/v1/cart/{item_id}
 ```

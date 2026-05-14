@@ -35,6 +35,11 @@ class Product(Base):
         cascade="all, delete-orphan",
         order_by="ProductImage.id",
     )
+    cart_items = relationship(
+        "CartItem",
+        back_populates="product",
+        cascade="all, delete-orphan",
+    )
 
 
 class ProductImage(Base):
