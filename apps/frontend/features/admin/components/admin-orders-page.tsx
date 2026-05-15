@@ -4,15 +4,19 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AdminDataTable } from "@/features/admin/components/admin-data-table";
 import {
   getAdminOrders,
   updateAdminOrderStatus,
 } from "@/features/admin/admin.service";
 import { formatCartPrice } from "@/features/cart/cart-format";
+import { ShoppingBag } from "lucide-react";
 import type { Order, OrderStatus } from "@/types/order";
 
 const statuses: OrderStatus[] = [
@@ -123,13 +127,29 @@ export function AdminOrdersPage() {
           <h2 className="text-lg font-black text-white">{admin("orders")}</h2>
         </CardHeader>
         <CardContent>
-          {isLoading ? <div className="h-64 animate-pulse rounded-md bg-white/10" /> : null}
-          {!isLoading && error ? (
-            <div className="rounded-md border border-red-400/30 bg-red-950/40 p-4 text-red-200">
-              {error}
+          {isLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-11 w-full" />
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton className="h-12 w-full" key={index} />
+              ))}
             </div>
           ) : null}
-          {!isLoading && !error ? (
+          {!isLoading && error ? (
+            <ErrorState
+              description={error}
+              onRetry={loadOrders}
+              title={admin("ordersError")}
+            />
+          ) : null}
+          {!isLoading && !error && orders.length === 0 ? (
+            <EmptyState
+              description={admin("noOrders")}
+              icon={<ShoppingBag aria-hidden="true" className="size-6" />}
+              title={admin("orders")}
+            />
+          ) : null}
+          {!isLoading && !error && orders.length > 0 ? (
             <AdminDataTable columns={columns} data={orders} emptyLabel={admin("noOrders")} />
           ) : null}
         </CardContent>

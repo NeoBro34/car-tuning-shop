@@ -1,11 +1,18 @@
 "use client";
 
-import { Search, SlidersHorizontal } from "lucide-react";
+import { PackageSearch, Search, SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { ProductFilters } from "@/features/products/components/product-filters";
 import { ProductGrid } from "@/features/products/components/product-grid";
 import { Pagination } from "@/features/products/components/pagination";
+import {
+  PaginationSkeleton,
+  ProductFiltersSkeleton,
+  ProductGridSkeleton,
+} from "@/features/products/components/product-skeletons";
 import {
   getBrands,
   getCategories,
@@ -63,6 +70,7 @@ export function ProductsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [meta, setMeta] = useState<ListMeta>(initialMeta);
   const [products, setProducts] = useState<Product[]>([]);
+  const [retryKey, setRetryKey] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>("featured");
 
   const params = useMemo(
@@ -137,7 +145,7 @@ export function ProductsPage() {
     loadProducts();
 
     return () => controller.abort();
-  }, [params, t]);
+  }, [params, retryKey, t]);
 
   function handleFilterChange(nextFilters: ProductFiltersState) {
     setFilters(nextFilters);
@@ -170,13 +178,17 @@ export function ProductsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-        <ProductFilters
-          brands={brands}
-          categories={categories}
-          filters={filters}
-          onChange={handleFilterChange}
-          onReset={handleResetFilters}
-        />
+        {isLoading && categories.length === 0 && brands.length === 0 ? (
+          <ProductFiltersSkeleton />
+        ) : (
+          <ProductFilters
+            brands={brands}
+            categories={categories}
+            filters={filters}
+            onChange={handleFilterChange}
+            onReset={handleResetFilters}
+          />
+        )}
 
         <div className="space-y-6">
           <div className="auto-card flex flex-col gap-4 rounded-lg p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -209,32 +221,26 @@ export function ProductsPage() {
           </div>
 
           {isLoading ? (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {Array.from({ length: PAGE_SIZE }).map((_, index) => (
-                <div
-                  className="h-96 animate-pulse rounded-lg border border-white/10 bg-white/[0.06]"
-                  key={index}
-                />
-              ))}
-            </div>
+            <>
+              <ProductGridSkeleton count={PAGE_SIZE} />
+              <PaginationSkeleton />
+            </>
           ) : null}
 
           {!isLoading && error ? (
-            <div className="rounded-lg border border-red-400/30 bg-red-950/40 p-6">
-              <h2 className="font-bold text-red-100">{t("loadingErrorTitle")}</h2>
-              <p className="mt-2 text-sm leading-6 text-red-200">{error}</p>
-            </div>
+            <ErrorState
+              description={error}
+              onRetry={() => setRetryKey((value) => value + 1)}
+              title={t("loadingErrorTitle")}
+            />
           ) : null}
 
           {!isLoading && !error && products.length === 0 ? (
-            <div className="auto-card rounded-lg p-8 text-center">
-              <h2 className="text-xl font-bold text-white">
-                {t("emptyTitle")}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">
-                {t("emptyDescription")}
-              </p>
-            </div>
+            <EmptyState
+              description={t("emptyDescription")}
+              icon={<PackageSearch aria-hidden="true" className="size-6" />}
+              title={t("emptyTitle")}
+            />
           ) : null}
 
           {!isLoading && !error && products.length > 0 ? (

@@ -3,6 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import { ErrorState } from "@/components/ui/error-state";
 import { useAuthStore } from "@/store/auth-store";
 
 type AdminGuardProps = {
@@ -47,9 +48,11 @@ export function AdminGuard({ children }: AdminGuardProps) {
   if (!isAdmin) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-lg border border-red-400/30 bg-red-950/40 p-6 text-red-200">
-          {t("accessRequired")}
-        </div>
+        <ErrorState
+          description={t("accessRequired")}
+          title={t("accessRequired")}
+          type="unauthorized"
+        />
       </div>
     );
   }

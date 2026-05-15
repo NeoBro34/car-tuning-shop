@@ -4,8 +4,10 @@ import { Link } from "@/i18n/navigation";
 import { ArrowLeft, BadgeCheck, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
+import { ErrorState } from "@/components/ui/error-state";
 import { ProductGallery } from "@/features/products/components/product-gallery";
 import { ProductInfo } from "@/features/products/components/product-info";
+import { ProductDetailSkeleton } from "@/features/products/components/product-skeletons";
 import { RelatedProducts } from "@/features/products/components/related-products";
 import {
   getBrands,
@@ -32,6 +34,7 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [retryKey, setRetryKey] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   const categoryById = useMemo(
@@ -88,18 +91,10 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
     loadProduct();
 
     return () => controller.abort();
-  }, [slug, t]);
+  }, [retryKey, slug, t]);
 
   if (isLoading) {
-    return (
-      <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mb-6 h-5 w-32 animate-pulse rounded bg-white/10" />
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="aspect-square animate-pulse rounded-lg bg-white/10" />
-          <div className="h-[30rem] animate-pulse rounded-lg bg-white/10" />
-        </div>
-      </section>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (error || !product) {
@@ -108,11 +103,12 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
         <Link className="text-sm font-semibold text-red-300" href="/products">
           {common("backToProducts")}
         </Link>
-        <div className="mt-6 rounded-lg border border-red-400/30 bg-red-950/40 p-6">
-          <h1 className="font-bold text-red-100">{t("loadErrorTitle")}</h1>
-          <p className="mt-2 text-sm leading-6 text-red-200">
-            {error ?? t("notFound")}
-          </p>
+        <div className="mt-6">
+          <ErrorState
+            description={error ?? t("notFound")}
+            onRetry={() => setRetryKey((value) => value + 1)}
+            title={t("loadErrorTitle")}
+          />
         </div>
       </section>
     );

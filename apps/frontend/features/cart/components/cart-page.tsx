@@ -1,9 +1,13 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { ShoppingCart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { CartItemList } from "@/features/cart/components/cart-item-list";
+import { CartSkeleton } from "@/features/cart/components/cart-skeleton";
 import { CartSummary } from "@/features/cart/components/cart-summary";
 import { useCartStore } from "@/store/cart-store";
 
@@ -29,36 +33,28 @@ export function CartPage() {
       </div>
 
       {isLoading && items.length === 0 ? (
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div
-                className="h-36 animate-pulse rounded-lg bg-white/10"
-                key={index}
-              />
-            ))}
-          </div>
-          <div className="h-64 animate-pulse rounded-lg bg-white/10" />
-        </div>
+        <CartSkeleton />
       ) : null}
 
       {!isLoading && error ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-950/40 p-6">
-          <h2 className="font-bold text-red-100">{t("loadErrorTitle")}</h2>
-          <p className="mt-2 text-sm leading-6 text-red-200">{error}</p>
-        </div>
+        <ErrorState
+          description={error}
+          onRetry={fetchCart}
+          title={t("loadErrorTitle")}
+        />
       ) : null}
 
       {!isLoading && !error && items.length === 0 ? (
-        <div className="auto-card rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-black text-white">{t("emptyTitle")}</h2>
-          <p className="mt-2 text-sm text-zinc-400">
-            {t("emptyDescription")}
-          </p>
-          <Link className="btn-primary mt-6" href="/products">
-            {common("browseProducts")}
-          </Link>
-        </div>
+        <EmptyState
+          action={
+            <Link className="btn-primary" href="/products">
+              {common("browseProducts")}
+            </Link>
+          }
+          description={t("emptyDescription")}
+          icon={<ShoppingCart aria-hidden="true" className="size-6" />}
+          title={t("emptyTitle")}
+        />
       ) : null}
 
       {items.length > 0 ? (
