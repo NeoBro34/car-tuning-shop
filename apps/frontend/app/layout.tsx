@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getSiteUrl, seoConfig } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,12 +15,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Car Tuning Shop",
-    template: "%s | Car Tuning Shop",
+    default: seoConfig.siteName,
+    template: `%s | ${seoConfig.siteName}`,
   },
-  description:
-    "Browse performance parts, styling upgrades, and accessories for tuned cars.",
-  metadataBase: new URL("http://localhost:3000"),
+  description: "Browse performance parts, styling upgrades, and accessories for tuned cars.",
+  metadataBase: getSiteUrl(),
+  applicationName: seoConfig.siteName,
 };
 
 export default function RootLayout({

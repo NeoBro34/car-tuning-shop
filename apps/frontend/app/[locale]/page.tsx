@@ -14,6 +14,7 @@ import {
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
+import { buildPageMetadata } from "@/lib/seo";
 
 const categories = [
   { nameKey: "turbo", metaKey: "turboMeta", icon: Zap },
@@ -40,10 +41,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Home" });
 
-  return {
+  return buildPageMetadata({
+    locale,
     title: "Car Tuning Shop",
     description: t("description"),
-  };
+    keywords: ["car tuning shop", "performance car parts", "tuning accessories"],
+  });
 }
 
 export default function Home() {

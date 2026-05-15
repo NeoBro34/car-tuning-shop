@@ -2,10 +2,10 @@
 
 import { PackageSearch, Search, SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { ProductFilters } from "@/features/products/components/product-filters";
 import { ProductGrid } from "@/features/products/components/product-grid";
 import { Pagination } from "@/features/products/components/pagination";
 import {
@@ -28,6 +28,16 @@ import type {
 } from "@/features/products/product.types";
 
 const PAGE_SIZE = 9;
+
+const ProductFilters = dynamic(
+  () =>
+    import("@/features/products/components/product-filters").then(
+      (module) => module.ProductFilters,
+    ),
+  {
+    loading: () => <ProductFiltersSkeleton />,
+  },
+);
 
 const initialFilters: ProductFiltersState = {
   search: "",
@@ -147,18 +157,18 @@ export function ProductsPage() {
     return () => controller.abort();
   }, [params, retryKey, t]);
 
-  function handleFilterChange(nextFilters: ProductFiltersState) {
+  const handleFilterChange = useCallback((nextFilters: ProductFiltersState) => {
     setFilters(nextFilters);
     setCurrentPage(1);
-  }
+  }, []);
 
-  function handleResetFilters() {
+  const handleResetFilters = useCallback(() => {
     setFilters(initialFilters);
     setCurrentPage(1);
-  }
+  }, []);
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section className="mx-auto min-h-[calc(100vh-5rem)] w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div className="max-w-3xl">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-red-300">

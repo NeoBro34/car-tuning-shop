@@ -22,7 +22,7 @@ export function CartPage() {
   }, [fetchCart]);
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section className="mx-auto min-h-[calc(100vh-5rem)] w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8">
         <p className="text-sm font-black uppercase tracking-[0.18em] text-red-300">
           {t("eyebrow")}

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useMemo } from "react";
 import type {
   Brand,
   Category,
@@ -16,10 +17,14 @@ type ProductGridProps = {
 
 export function ProductGrid({ brands, categories, products }: ProductGridProps) {
   const shouldReduceMotion = useReducedMotion();
-  const categoryById = new Map(
-    categories.map((category) => [category.id, category]),
+  const categoryById = useMemo(
+    () => new Map(categories.map((category) => [category.id, category])),
+    [categories],
   );
-  const brandById = new Map(brands.map((brand) => [brand.id, brand]));
+  const brandById = useMemo(
+    () => new Map(brands.map((brand) => [brand.id, brand])),
+    [brands],
+  );
 
   return (
     <motion.div

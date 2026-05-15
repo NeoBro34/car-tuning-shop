@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ProductImage } from "@/features/products/product.types";
@@ -37,16 +38,23 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-zinc-950 shadow-2xl shadow-black/30">
         <AnimatePresence initial={false} mode="wait">
           {activeImage ? (
-            <motion.img
-              alt={productName}
+            <motion.div
               animate={{ opacity: 1, scale: 1 }}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0"
               exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.99 }}
               initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 1.01 }}
               key={activeImage.id}
-              src={activeImage.image_url}
               transition={{ duration: 0.2, ease: "easeOut" }}
-            />
+            >
+              <Image
+                alt={productName}
+                className="object-cover"
+                fill
+                priority
+                sizes="(min-width: 1024px) 48vw, 100vw"
+                src={activeImage.image_url}
+              />
+            </motion.div>
           ) : (
             <motion.span
               animate={{ opacity: 1 }}
@@ -80,11 +88,13 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 whileHover={shouldReduceMotion ? undefined : { y: -2 }}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   alt={`${productName} thumbnail ${index + 1}`}
                   className="h-full w-full object-cover"
+                  height={160}
+                  loading="lazy"
                   src={image.image_url}
+                  width={160}
                 />
               </motion.button>
             );

@@ -3,7 +3,9 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { memo, useCallback } from "react";
 import toast from "react-hot-toast";
 import type {
   Brand,
@@ -22,7 +24,7 @@ type ProductCardProps = {
   brand?: Brand;
 };
 
-export function ProductCard({ product, category, brand }: ProductCardProps) {
+function ProductCardComponent({ product, category, brand }: ProductCardProps) {
   const common = useTranslations("Common");
   const t = useTranslations("Products");
   const shouldReduceMotion = useReducedMotion();
@@ -33,7 +35,7 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
   const discount = getDiscountPercentage(product.price, product.discount_price);
   const isOutOfStock = product.stock_quantity <= 0;
 
-  async function handleAddToCart() {
+  const handleAddToCart = useCallback(async () => {
     if (isOutOfStock) {
       return;
     }
@@ -44,7 +46,7 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
     } catch {
       toast.error(t("addError"));
     }
-  }
+  }, [addItem, isOutOfStock, product, t]);
 
   return (
     <motion.article
@@ -57,10 +59,12 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
         href={`/products/${product.slug}`}
       >
         {mainImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             alt={product.name}
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            fill
+            loading="lazy"
+            sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
             src={mainImage.image_url}
           />
         ) : (
@@ -133,3 +137,5 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
     </motion.article>
   );
 }
+
+export const ProductCard = memo(ProductCardComponent);

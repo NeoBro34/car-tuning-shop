@@ -7,6 +7,10 @@ type RevealProps = HTMLMotionProps<"div"> & {
   delay?: number;
 };
 
+type MotionDivProps = Omit<HTMLMotionProps<"div">, "children"> & {
+  children: React.ReactNode;
+};
+
 export function Reveal({
   children,
   className,
@@ -34,7 +38,17 @@ export function StaggerGroup({
   children,
   className,
   ...props
-}: HTMLMotionProps<"div">) {
+}: MotionDivProps) {
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return (
+      <div className={className}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className={className}
@@ -60,7 +74,7 @@ export function StaggerItem({
   children,
   className,
   ...props
-}: HTMLMotionProps<"div">) {
+}: MotionDivProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
