@@ -26,8 +26,9 @@ def list_brands(
     service: Annotated[BrandService, Depends(get_brand_service)],
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     offset: Annotated[int, Query(ge=0)] = 0,
+    search: Annotated[str | None, Query(min_length=1, max_length=120)] = None,
 ) -> BrandListResponse:
-    return service.list_brands(limit=limit, offset=offset)
+    return service.list_brands(limit=limit, offset=offset, search=search)
 
 
 @router.get("/{brand_id}", response_model=BrandResponse)
@@ -65,4 +66,3 @@ def delete_brand(
 ) -> Response:
     service.delete_brand(brand_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-

@@ -11,9 +11,14 @@ class BrandService:
     def __init__(self, brands: BrandRepository) -> None:
         self.brands = brands
 
-    def list_brands(self, limit: int, offset: int) -> BrandListResponse:
-        items = self.brands.list(limit=limit, offset=offset)
-        total = self.brands.count()
+    def list_brands(
+        self,
+        limit: int,
+        offset: int,
+        search: str | None = None,
+    ) -> BrandListResponse:
+        items = self.brands.list(limit=limit, offset=offset, search=search)
+        total = self.brands.count(search=search)
         return BrandListResponse(
             items=items,
             meta=ListMeta(total=total, limit=limit, offset=offset),
@@ -72,4 +77,3 @@ class BrandService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Brand with this slug already exists",
             )
-

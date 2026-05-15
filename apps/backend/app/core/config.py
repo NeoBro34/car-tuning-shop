@@ -37,6 +37,10 @@ class Settings:
         "CORS_ALLOW_ORIGINS",
         "http://localhost:3000,http://127.0.0.1:3000",
     )
+    CORS_ALLOW_ORIGIN_REGEX = os.getenv(
+        "CORS_ALLOW_ORIGIN_REGEX",
+        r"http://(localhost|127\.0\.0\.1):[0-9]+",
+    )
 
     @cached_property
     def is_default_secret(self) -> bool:

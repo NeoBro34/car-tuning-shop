@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import AdminUser
 from app.core.database import get_db
 from app.repositories.brand_repository import BrandRepository
+from app.repositories.car_model_repository import CarModelRepository
 from app.repositories.category_repository import CategoryRepository
 from app.repositories.product_repository import ProductRepository
 from app.schemas.product import (
@@ -26,6 +27,7 @@ def get_product_service(db: Annotated[Session, Depends(get_db)]) -> ProductServi
         ProductRepository(db),
         CategoryRepository(db),
         BrandRepository(db),
+        CarModelRepository(db),
     )
 
 
@@ -37,6 +39,7 @@ def list_products(
     search: Annotated[str | None, Query(min_length=1, max_length=120)] = None,
     category_id: Annotated[int | None, Query(gt=0)] = None,
     brand_id: Annotated[int | None, Query(gt=0)] = None,
+    car_model_id: Annotated[int | None, Query(gt=0)] = None,
     min_price: Annotated[Decimal | None, Query(ge=0)] = None,
     max_price: Annotated[Decimal | None, Query(ge=0)] = None,
 ) -> ProductListResponse:
@@ -46,6 +49,7 @@ def list_products(
         search=search,
         category_id=category_id,
         brand_id=brand_id,
+        car_model_id=car_model_id,
         min_price=min_price,
         max_price=max_price,
     )

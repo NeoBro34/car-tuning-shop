@@ -19,6 +19,7 @@ class ProductBase(BaseModel):
     sku: str = Field(min_length=2, max_length=80)
     category_id: int = Field(gt=0)
     brand_id: int = Field(gt=0)
+    car_model_id: int | None = Field(default=None, gt=0)
 
     @field_validator("name", "sku")
     @classmethod
@@ -53,6 +54,7 @@ class ProductUpdate(BaseModel):
     sku: str | None = Field(default=None, min_length=2, max_length=80)
     category_id: int | None = Field(default=None, gt=0)
     brand_id: int | None = Field(default=None, gt=0)
+    car_model_id: int | None = Field(default=None, gt=0)
 
     @field_validator("name", "sku")
     @classmethod
@@ -90,6 +92,7 @@ class ProductResponse(BaseModel):
     is_active: bool
     category_id: int
     brand_id: int
+    car_model_id: int | None
     created_at: datetime
     updated_at: datetime
     images: list[ProductImageResponse] = []

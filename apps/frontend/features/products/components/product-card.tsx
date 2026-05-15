@@ -16,6 +16,7 @@ import {
   formatPrice,
   getDiscountPercentage,
 } from "@/features/products/product-format";
+import { mediaUrl } from "@/lib/media-url";
 import { useCartStore } from "@/store/cart-store";
 
 type ProductCardProps = {
@@ -30,6 +31,7 @@ function ProductCardComponent({ product, category, brand }: ProductCardProps) {
   const shouldReduceMotion = useReducedMotion();
   const mainImage =
     product.images.find((image) => image.is_main) ?? product.images[0];
+  const mainImageUrl = mediaUrl(mainImage?.image_url);
   const activePrice = product.discount_price ?? product.price;
   const addItem = useCartStore((state) => state.addItem);
   const discount = getDiscountPercentage(product.price, product.discount_price);
@@ -58,14 +60,14 @@ function ProductCardComponent({ product, category, brand }: ProductCardProps) {
         className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-zinc-900"
         href={`/products/${product.slug}`}
       >
-        {mainImage ? (
+        {mainImageUrl ? (
           <Image
             alt={product.name}
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             fill
             loading="lazy"
             sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
-            src={mainImage.image_url}
+            src={mainImageUrl}
           />
         ) : (
           <span className="px-4 text-center text-sm font-semibold text-zinc-500">
@@ -104,7 +106,7 @@ function ProductCardComponent({ product, category, brand }: ProductCardProps) {
         >
           {product.name}
         </Link>
-        <p className="mt-2 line-clamp-3 text-sm leading-6 text-zinc-500">
+        <p className="mt-2 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-zinc-500">
           {product.description}
         </p>
         <div className="mt-4 flex items-end justify-between gap-3">
@@ -125,7 +127,7 @@ function ProductCardComponent({ product, category, brand }: ProductCardProps) {
         <motion.button
           whileTap={isOutOfStock || shouldReduceMotion ? undefined : { scale: 0.98 }}
           whileHover={isOutOfStock || shouldReduceMotion ? undefined : { scale: 1.01 }}
-          className="btn-primary mt-5 w-full gap-2 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
+          className="btn-primary mt-auto w-full gap-2 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
           disabled={isOutOfStock}
           onClick={handleAddToCart}
           type="button"

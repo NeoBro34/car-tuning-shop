@@ -8,11 +8,23 @@ from fastapi import HTTPException, UploadFile, status
 from app.core.config import settings
 from app.models.product import Product, ProductImage
 from app.repositories.brand_repository import BrandRepository
+from app.repositories.car_model_repository import CarModelRepository
 from app.repositories.category_repository import CategoryRepository
 from app.repositories.product_repository import ProductRepository
 from app.schemas.common import ListMeta
 from app.schemas.product import ProductCreate, ProductListResponse, ProductUpdate
 from app.services.slug import slugify
+
+MAX_PRODUCT_IMAGES_PER_UPLOAD = 5
+ALLOWED_PRODUCT_IMAGE_EXTENSIONS = {
+    ".avif",
+    ".gif",
+    ".jfif",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".webp",
+}
 
 
 class ProductService:
@@ -21,10 +33,12 @@ class ProductService:
         products: ProductRepository,
         categories: CategoryRepository,
         brands: BrandRepository,
+        car_models: CarModelRepository,
     ) -> None:
         self.products = products
         self.categories = categories
         self.brands = brands
+        self.car_models = car_models
 
     def list_products(
         self,
@@ -33,6 +47,7 @@ class ProductService:
         search: str | None,
         category_id: int | None,
         brand_id: int | None,
+        car_model_id: int | None,
         min_price: Decimal | None,
         max_price: Decimal | None,
     ) -> ProductListResponse:
@@ -48,6 +63,7 @@ class ProductService:
             search=search,
             category_id=category_id,
             brand_id=brand_id,
+            car_model_id=car_model_id,
             min_price=min_price,
             max_price=max_price,
         )
@@ -55,6 +71,7 @@ class ProductService:
             search=search,
             category_id=category_id,
             brand_id=brand_id,
+            car_model_id=car_model_id,
             min_price=min_price,
             max_price=max_price,
         )
@@ -83,7 +100,11 @@ class ProductService:
 
     def create_product(self, payload: ProductCreate) -> Product:
         slug = payload.slug or slugify(payload.name)
-        self._validate_references(payload.category_id, payload.brand_id)
+        self._validate_references(
+            payload.category_id,
+            payload.brand_id,
+            payload.car_model_id,
+        )
         self._ensure_unique(slug=slug, sku=payload.sku)
         return self.products.create(payload, slug)
 
@@ -93,7 +114,12 @@ class ProductService:
 
         category_id = data.get("category_id", product.category_id)
         brand_id = data.get("brand_id", product.brand_id)
-        self._validate_references(int(category_id), int(brand_id))
+        car_model_id = data.get("car_model_id", product.car_model_id)
+        self._validate_references(
+            int(category_id),
+            int(brand_id),
+            int(car_model_id) if car_model_id is not None else None,
+        )
 
         price = data.get("price", product.price)
         discount_price = data.get("discount_price", product.discount_price)
@@ -130,6 +156,11 @@ class ProductService:
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="At least one image is required",
             )
+        if len(files) > MAX_PRODUCT_IMAGES_PER_UPLOAD:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Upload up to {MAX_PRODUCT_IMAGES_PER_UPLOAD} images",
+            )
         if main_index is not None and (main_index < 0 or main_index >= len(files)):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -161,7 +192,12 @@ class ProductService:
             )
         self._delete_local_file(image.image_url)
 
-    def _validate_references(self, category_id: int, brand_id: int) -> None:
+    def _validate_references(
+        self,
+        category_id: int,
+        brand_id: int,
+        car_model_id: int | None = None,
+    ) -> None:
         if self.categories.get_by_id(category_id) is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -172,6 +208,18 @@ class ProductService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Brand not found",
             )
+        if car_model_id is not None:
+            car_model = self.car_models.get_by_id(car_model_id)
+            if car_model is None:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Car model not found",
+                )
+            if car_model.brand_id != brand_id:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="Car model must belong to selected brand",
+                )
 
     def _ensure_unique(
         self,
@@ -201,10 +249,10 @@ class ProductService:
             )
 
         extension = Path(file.filename or "").suffix.lower()
-        if extension not in {".jpg", ".jpeg", ".png", ".webp", ".gif"}:
+        if extension not in ALLOWED_PRODUCT_IMAGE_EXTENSIONS:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Unsupported image file extension",
+                detail="Unsupported image file extension. Use JPG, PNG, WEBP, GIF, AVIF, or JFIF.",
             )
 
         upload_dir = Path(settings.UPLOAD_DIR) / "products"

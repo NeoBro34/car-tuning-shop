@@ -26,8 +26,9 @@ def list_categories(
     service: Annotated[CategoryService, Depends(get_category_service)],
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     offset: Annotated[int, Query(ge=0)] = 0,
+    search: Annotated[str | None, Query(min_length=1, max_length=120)] = None,
 ) -> CategoryListResponse:
-    return service.list_categories(limit=limit, offset=offset)
+    return service.list_categories(limit=limit, offset=offset, search=search)
 
 
 @router.get("/{category_id}", response_model=CategoryResponse)
@@ -65,4 +66,3 @@ def delete_category(
 ) -> Response:
     service.delete_category(category_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-

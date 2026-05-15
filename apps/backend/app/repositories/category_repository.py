@@ -20,12 +20,26 @@ class CategoryRepository:
         statement = select(Category).where(Category.slug == slug)
         return self.db.scalar(statement)
 
-    def list(self, limit: int, offset: int) -> list[Category]:
-        statement = select(Category).order_by(Category.id).limit(limit).offset(offset)
+    def list(self, limit: int, offset: int, search: str | None = None) -> list[Category]:
+        statement = select(Category).order_by(Category.name)
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            statement = statement.where(
+                func.lower(Category.name).like(pattern)
+                | func.lower(Category.slug).like(pattern)
+            )
+        statement = statement.limit(limit).offset(offset)
         return list(self.db.scalars(statement))
 
-    def count(self) -> int:
-        return self.db.scalar(select(func.count()).select_from(Category)) or 0
+    def count(self, search: str | None = None) -> int:
+        statement = select(func.count()).select_from(Category)
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            statement = statement.where(
+                func.lower(Category.name).like(pattern)
+                | func.lower(Category.slug).like(pattern)
+            )
+        return self.db.scalar(statement) or 0
 
     def create(self, payload: CategoryCreate, slug: str) -> Category:
         category = Category(
@@ -49,4 +63,3 @@ class CategoryRepository:
     def delete(self, category: Category) -> None:
         self.db.delete(category)
         self.db.commit()
-

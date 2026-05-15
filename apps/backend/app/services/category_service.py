@@ -11,9 +11,14 @@ class CategoryService:
     def __init__(self, categories: CategoryRepository) -> None:
         self.categories = categories
 
-    def list_categories(self, limit: int, offset: int) -> CategoryListResponse:
-        items = self.categories.list(limit=limit, offset=offset)
-        total = self.categories.count()
+    def list_categories(
+        self,
+        limit: int,
+        offset: int,
+        search: str | None = None,
+    ) -> CategoryListResponse:
+        items = self.categories.list(limit=limit, offset=offset, search=search)
+        total = self.categories.count(search=search)
         return CategoryListResponse(
             items=items,
             meta=ListMeta(total=total, limit=limit, offset=offset),
@@ -72,4 +77,3 @@ class CategoryService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Category with this slug already exists",
             )
-

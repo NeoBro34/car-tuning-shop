@@ -26,9 +26,15 @@ class CarModelService:
         limit: int,
         offset: int,
         brand_id: int | None = None,
+        search: str | None = None,
     ) -> CarModelListResponse:
-        items = self.car_models.list(limit=limit, offset=offset, brand_id=brand_id)
-        total = self.car_models.count(brand_id=brand_id)
+        items = self.car_models.list(
+            limit=limit,
+            offset=offset,
+            brand_id=brand_id,
+            search=search,
+        )
+        total = self.car_models.count(brand_id=brand_id, search=search)
         return CarModelListResponse(
             items=items,
             meta=ListMeta(total=total, limit=limit, offset=offset),
@@ -108,4 +114,3 @@ class CarModelService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Car model with this slug already exists for this brand",
             )
-

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { routing, type Locale } from "@/i18n/routing";
 import type { Product } from "@/features/products/product.types";
+import { mediaUrl } from "@/lib/media-url";
 
 const fallbackSiteUrl = "http://localhost:3000";
 
@@ -129,10 +130,10 @@ export function buildPageMetadata({
 }
 
 export function getProductMainImage(product: Product) {
-  return (
+  return mediaUrl(
     product.images.find((image) => image.is_main)?.image_url ??
     product.images[0]?.image_url ??
-    null
+    null,
   );
 }
 

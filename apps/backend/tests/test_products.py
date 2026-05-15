@@ -15,6 +15,20 @@ def _catalog(client: TestClient, admin_headers: dict[str, str]) -> tuple[int, in
     return category["id"], brand["id"]
 
 
+def _car_model(
+    client: TestClient,
+    admin_headers: dict[str, str],
+    brand_id: int,
+    name: str = "M3",
+) -> int:
+    car_model = client.post(
+        "/api/v1/car-models",
+        json={"brand_id": brand_id, "name": name},
+        headers=admin_headers,
+    ).json()
+    return car_model["id"]
+
+
 def _product_payload(category_id: int, brand_id: int) -> dict[str, object]:
     return {
         "name": "HKS Hi-Power Exhaust",
@@ -139,3 +153,91 @@ def test_product_image_upload_and_static_file(
         headers=admin_headers,
     )
     assert deleted.status_code == 204
+
+
+def test_product_image_upload_accepts_one_to_five_images(
+    client: TestClient,
+    admin_headers: dict[str, str],
+) -> None:
+    category_id, brand_id = _catalog(client, admin_headers)
+    payload = _product_payload(category_id, brand_id)
+    payload["sku"] = "FIVE-IMG"
+    product = client.post(
+        "/api/v1/products",
+        json=payload,
+        headers=admin_headers,
+    ).json()
+
+    uploaded = client.post(
+        f"/api/v1/products/{product['id']}/images?main_index=4",
+        files=[
+            ("files", (f"image-{index}.png", f"fake image {index}".encode(), "image/png"))
+            for index in range(5)
+        ],
+        headers=admin_headers,
+    )
+    assert uploaded.status_code == 200
+    images = uploaded.json()["images"]
+    assert len(images) == 5
+    assert images[4]["is_main"] is True
+
+
+def test_product_image_upload_rejects_more_than_five_images(
+    client: TestClient,
+    admin_headers: dict[str, str],
+) -> None:
+    category_id, brand_id = _catalog(client, admin_headers)
+    payload = _product_payload(category_id, brand_id)
+    payload["sku"] = "SIX-IMG"
+    product = client.post(
+        "/api/v1/products",
+        json=payload,
+        headers=admin_headers,
+    ).json()
+
+    uploaded = client.post(
+        f"/api/v1/products/{product['id']}/images?main_index=0",
+        files=[
+            ("files", (f"image-{index}.png", f"fake image {index}".encode(), "image/png"))
+            for index in range(6)
+        ],
+        headers=admin_headers,
+    )
+    assert uploaded.status_code == 422
+    assert uploaded.json()["detail"] == "Upload up to 5 images"
+
+
+def test_product_car_model_must_belong_to_selected_brand(
+    client: TestClient,
+    admin_headers: dict[str, str],
+) -> None:
+    category_id, brand_id = _catalog(client, admin_headers)
+    other_brand = client.post(
+        "/api/v1/brands",
+        json={"name": "BMW"},
+        headers=admin_headers,
+    ).json()
+    car_model_id = _car_model(client, admin_headers, brand_id, "Avante")
+    other_car_model_id = _car_model(client, admin_headers, other_brand["id"], "M3")
+
+    mismatch = client.post(
+        "/api/v1/products",
+        json={
+            **_product_payload(category_id, brand_id),
+            "car_model_id": other_car_model_id,
+        },
+        headers=admin_headers,
+    )
+    assert mismatch.status_code == 422
+
+    created = client.post(
+        "/api/v1/products",
+        json={**_product_payload(category_id, brand_id), "car_model_id": car_model_id},
+        headers=admin_headers,
+    )
+    assert created.status_code == 201
+    assert created.json()["car_model_id"] == car_model_id
+
+    listed = client.get(f"/api/v1/products?car_model_id={car_model_id}")
+    assert listed.status_code == 200
+    assert listed.json()["meta"]["total"] == 1

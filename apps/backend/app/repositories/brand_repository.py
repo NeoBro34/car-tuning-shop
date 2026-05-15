@@ -20,12 +20,26 @@ class BrandRepository:
         statement = select(Brand).where(Brand.slug == slug)
         return self.db.scalar(statement)
 
-    def list(self, limit: int, offset: int) -> list[Brand]:
-        statement = select(Brand).order_by(Brand.id).limit(limit).offset(offset)
+    def list(self, limit: int, offset: int, search: str | None = None) -> list[Brand]:
+        statement = select(Brand).order_by(Brand.name)
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            statement = statement.where(
+                func.lower(Brand.name).like(pattern)
+                | func.lower(Brand.slug).like(pattern)
+            )
+        statement = statement.limit(limit).offset(offset)
         return list(self.db.scalars(statement))
 
-    def count(self) -> int:
-        return self.db.scalar(select(func.count()).select_from(Brand)) or 0
+    def count(self, search: str | None = None) -> int:
+        statement = select(func.count()).select_from(Brand)
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            statement = statement.where(
+                func.lower(Brand.name).like(pattern)
+                | func.lower(Brand.slug).like(pattern)
+            )
+        return self.db.scalar(statement) or 0
 
     def create(self, payload: BrandCreate, slug: str) -> Brand:
         brand = Brand(
@@ -49,4 +63,3 @@ class BrandRepository:
     def delete(self, brand: Brand) -> None:
         self.db.delete(brand)
         self.db.commit()
-

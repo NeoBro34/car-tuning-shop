@@ -21,6 +21,9 @@ class Product(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), index=True)
     brand_id: Mapped[int] = mapped_column(ForeignKey("brands.id"), index=True)
+    car_model_id: Mapped[int | None] = mapped_column(
+        ForeignKey("car_models.id"), index=True, nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -30,6 +33,7 @@ class Product(Base):
 
     category = relationship("Category", back_populates="products")
     brand = relationship("Brand", back_populates="products")
+    car_model = relationship("CarModel")
     images = relationship(
         "ProductImage",
         back_populates="product",

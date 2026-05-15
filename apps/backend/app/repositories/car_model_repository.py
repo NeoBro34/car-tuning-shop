@@ -19,17 +19,35 @@ class CarModelRepository:
         )
         return self.db.scalar(statement)
 
-    def list(self, limit: int, offset: int, brand_id: int | None = None) -> list[CarModel]:
-        statement = select(CarModel).order_by(CarModel.id)
+    def list(
+        self,
+        limit: int,
+        offset: int,
+        brand_id: int | None = None,
+        search: str | None = None,
+    ) -> list[CarModel]:
+        statement = select(CarModel).order_by(CarModel.name)
         if brand_id is not None:
             statement = statement.where(CarModel.brand_id == brand_id)
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            statement = statement.where(
+                func.lower(CarModel.name).like(pattern)
+                | func.lower(CarModel.slug).like(pattern)
+            )
         statement = statement.limit(limit).offset(offset)
         return list(self.db.scalars(statement))
 
-    def count(self, brand_id: int | None = None) -> int:
+    def count(self, brand_id: int | None = None, search: str | None = None) -> int:
         statement = select(func.count()).select_from(CarModel)
         if brand_id is not None:
             statement = statement.where(CarModel.brand_id == brand_id)
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            statement = statement.where(
+                func.lower(CarModel.name).like(pattern)
+                | func.lower(CarModel.slug).like(pattern)
+            )
         return self.db.scalar(statement) or 0
 
     def create(self, payload: CarModelCreate, slug: str) -> CarModel:
@@ -56,4 +74,3 @@ class CarModelRepository:
     def delete(self, car_model: CarModel) -> None:
         self.db.delete(car_model)
         self.db.commit()
-

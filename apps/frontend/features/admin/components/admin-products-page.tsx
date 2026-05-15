@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -23,6 +24,35 @@ import { getBrands, getCategories, type Brand, type Category, type Product } fro
 import { formatPrice } from "@/features/products/product-format";
 
 const PAGE_SIZE = 20;
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+  if (axios.isAxiosError(error)) {
+    const detail = error.response?.data?.detail;
+    if (typeof detail === "string") {
+      return `${fallback}: ${detail}`;
+    }
+  }
+
+  return fallback;
+}
+
+function composeProductDescription(values: AdminProductFormValues) {
+  const specs = (values.specifications ?? [])
+    .filter((spec) => spec.key.trim() && spec.value.trim())
+    .map((spec) => `- ${spec.key.trim()}: ${spec.value.trim()}`);
+
+  return [
+    values.short_description.trim(),
+    `Full Description:\n${values.full_description.trim()}`,
+    specs.length ? `Specifications:\n${specs.join("\n")}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+function getShortDescription(description: string) {
+  return description.split("\n").find((line) => line.trim()) ?? "";
+}
 
 export function AdminProductsPage() {
   const admin = useTranslations("Admin");
@@ -60,30 +90,70 @@ export function AdminProductsPage() {
     loadProducts();
   }, []);
 
-  async function submitProduct(values: AdminProductFormValues) {
+  async function submitProduct(
+    values: AdminProductFormValues,
+    mainImageIndex?: number,
+  ) {
     setIsSubmitting(true);
 
     try {
       const payload = {
-        ...values,
+        brand_id: values.brand_id,
+        car_model_id: values.car_model_id || null,
+        category_id: values.category_id,
+        description: composeProductDescription(values),
         discount_price: values.discount_price || null,
+        name: values.name,
+        price: values.price,
+        sku: values.sku,
         slug: values.slug || null,
+        stock_quantity: values.stock_quantity,
       };
 
       if (editingProduct) {
-        const updated = await updateAdminProduct(editingProduct.id, payload);
+        let updated = await updateAdminProduct(editingProduct.id, payload);
+        if (updated.is_active !== values.is_active) {
+          updated = await setAdminProductActive(updated.id, {
+            is_active: values.is_active,
+          });
+        }
+        if (values.images?.length) {
+          try {
+            updated = await uploadAdminProductImages(
+              updated.id,
+              values.images,
+              mainImageIndex,
+            );
+          } catch (error) {
+            toast.error(getApiErrorMessage(error, admin("imagesError")));
+          }
+        }
         setProducts((current) =>
           current.map((product) => (product.id === updated.id ? updated : product)),
         );
         setEditingProduct(null);
         toast.success(admin("updated"));
       } else {
-        const created = await createAdminProduct(payload);
+        let created = await createAdminProduct(payload);
+        if (!values.is_active) {
+          created = await setAdminProductActive(created.id, { is_active: false });
+        }
+        if (values.images?.length) {
+          try {
+            created = await uploadAdminProductImages(
+              created.id,
+              values.images,
+              mainImageIndex,
+            );
+          } catch (error) {
+            toast.error(getApiErrorMessage(error, admin("imagesError")));
+          }
+        }
         setProducts((current) => [created, ...current]);
         toast.success(admin("saved"));
       }
-    } catch {
-      toast.error(admin("saveError"));
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, admin("saveError")));
     } finally {
       setIsSubmitting(false);
     }
@@ -153,10 +223,33 @@ export function AdminProductsPage() {
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
       toast.success(admin("imagesUploaded"));
-    } catch {
-      toast.error(admin("imagesError"));
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, admin("imagesError")));
     }
   }
+
+  const productFormDefaults = useMemo(
+    () =>
+      editingProduct
+        ? {
+            brand_id: editingProduct.brand_id,
+            car_model_id: editingProduct.car_model_id ?? 0,
+            category_id: editingProduct.category_id,
+            discount_price: editingProduct.discount_price?.toString() ?? "",
+            full_description: editingProduct.description,
+            images: [],
+            is_active: editingProduct.is_active,
+            name: editingProduct.name,
+            price: editingProduct.price.toString(),
+            short_description: getShortDescription(editingProduct.description),
+            sku: editingProduct.sku,
+            slug: editingProduct.slug,
+            specifications: [{ key: "", value: "" }],
+            stock_quantity: editingProduct.stock_quantity,
+          }
+        : undefined,
+    [editingProduct],
+  );
 
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
@@ -237,21 +330,7 @@ export function AdminProductsPage() {
           <ProductForm
             brands={brands}
             categories={categories}
-            defaultValues={
-              editingProduct
-                ? {
-                    brand_id: editingProduct.brand_id,
-                    category_id: editingProduct.category_id,
-                    description: editingProduct.description,
-                    discount_price: editingProduct.discount_price?.toString() ?? "",
-                    name: editingProduct.name,
-                    price: editingProduct.price.toString(),
-                    sku: editingProduct.sku,
-                    slug: editingProduct.slug,
-                    stock_quantity: editingProduct.stock_quantity,
-                  }
-                : undefined
-            }
+            defaultValues={productFormDefaults}
             isSubmitting={isSubmitting}
             onSubmit={submitProduct}
             submitLabel={editingProduct ? admin("updateProduct") : admin("createProduct")}

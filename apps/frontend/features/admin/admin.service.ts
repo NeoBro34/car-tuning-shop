@@ -117,15 +117,27 @@ export async function deleteAdminProduct(productId: number) {
   await apiClient.delete(`/admin/products/${productId}`);
 }
 
-export async function uploadAdminProductImages(productId: number, files: FileList) {
+export async function uploadAdminProductImages(
+  productId: number,
+  files: FileList | File[],
+  mainIndex?: number,
+) {
   const formData = new FormData();
+  const selectedFiles = Array.from(files).slice(0, 5);
 
-  Array.from(files).forEach((file) => formData.append("files", file));
+  selectedFiles.forEach((file) => formData.append("files", file));
 
   const response = await apiClient.post<AdminProduct>(
     `/products/${productId}/images`,
     formData,
-    { headers: { "Content-Type": "multipart/form-data" } },
+    {
+      params: {
+        main_index:
+          mainIndex !== undefined && mainIndex < selectedFiles.length
+            ? mainIndex
+            : undefined,
+      },
+    },
   );
 
   return response.data;

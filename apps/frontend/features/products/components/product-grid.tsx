@@ -43,6 +43,7 @@ export function ProductGrid({ brands, categories, products }: ProductGridProps) 
     >
       {products.map((product) => (
         <motion.div
+          className="h-full"
           key={product.id}
           variants={{
             hidden: shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 },

@@ -23,6 +23,7 @@ export type Product = {
   is_active: boolean;
   category_id: number;
   brand_id: number;
+  car_model_id: number | null;
   created_at: string;
   updated_at: string;
   images: ProductImage[];
@@ -48,6 +49,18 @@ export type Brand = {
   updated_at: string;
 };
 
+export type CarModel = {
+  id: number;
+  brand_id: number;
+  name: string;
+  slug: string;
+  year_start: number | null;
+  year_end: number | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type ListResponse<T> = {
   items: T[];
   meta: ListMeta;
@@ -67,6 +80,7 @@ export type ProductQueryParams = {
   search?: string;
   category_id?: number;
   brand_id?: number;
+  car_model_id?: number;
   min_price?: string;
   max_price?: string;
 };

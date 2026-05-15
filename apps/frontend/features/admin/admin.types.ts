@@ -24,6 +24,7 @@ export type AdminProductPayload = {
   sku: string;
   category_id: number;
   brand_id: number;
+  car_model_id?: number | null;
 };
 
 export type AdminProductUpdatePayload = Partial<AdminProductPayload>;

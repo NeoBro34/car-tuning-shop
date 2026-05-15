@@ -19,7 +19,7 @@ export function AdminSidebar() {
 
   return (
     <aside className="auto-card rounded-lg p-3 lg:sticky lg:top-24">
-      <nav className="grid gap-1 sm:grid-cols-4 lg:grid-cols-1">
+      <nav className="grid gap-1 sm:grid-cols-3 lg:grid-cols-1">
         {adminLinks.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

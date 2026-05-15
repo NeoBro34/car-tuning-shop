@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ProductImage } from "@/features/products/product.types";
+import { mediaUrl } from "@/lib/media-url";
 
 type ProductGalleryProps = {
   images: ProductImage[];
@@ -27,6 +28,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   );
   const activeImage =
     sortedImages.find((image) => image.id === activeImageId) ?? sortedImages[0];
+  const activeImageUrl = mediaUrl(activeImage?.image_url);
 
   return (
     <motion.section
@@ -37,7 +39,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     >
       <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-zinc-950 shadow-2xl shadow-black/30">
         <AnimatePresence initial={false} mode="wait">
-          {activeImage ? (
+          {activeImageUrl ? (
             <motion.div
               animate={{ opacity: 1, scale: 1 }}
               className="absolute inset-0"
@@ -52,7 +54,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 fill
                 priority
                 sizes="(min-width: 1024px) 48vw, 100vw"
-                src={activeImage.image_url}
+                src={activeImageUrl}
               />
             </motion.div>
           ) : (
@@ -73,6 +75,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
           {sortedImages.map((image, index) => {
             const isActive = image.id === activeImage?.id;
+            const thumbnailUrl = mediaUrl(image.image_url);
 
             return (
               <motion.button
@@ -88,14 +91,16 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 whileHover={shouldReduceMotion ? undefined : { y: -2 }}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
               >
-                <Image
-                  alt={`${productName} thumbnail ${index + 1}`}
-                  className="h-full w-full object-cover"
-                  height={160}
-                  loading="lazy"
-                  src={image.image_url}
-                  width={160}
-                />
+                {thumbnailUrl ? (
+                  <Image
+                    alt={`${productName} thumbnail ${index + 1}`}
+                    className="h-full w-full object-cover"
+                    height={160}
+                    loading="lazy"
+                    src={thumbnailUrl}
+                    width={160}
+                  />
+                ) : null}
               </motion.button>
             );
           })}

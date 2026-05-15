@@ -28,6 +28,10 @@ apiClient.interceptors.request.use((config) => {
     return config;
   }
 
+  if (config.data instanceof FormData) {
+    config.headers.delete("Content-Type");
+  }
+
   const token =
     window.localStorage.getItem("accessToken") ?? getCookieValue("auth_token");
 

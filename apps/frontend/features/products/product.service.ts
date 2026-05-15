@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/api-client";
 import type {
   Brand,
+  CarModel,
   Category,
   ListResponse,
   Product,
@@ -47,9 +48,22 @@ export async function getCategories() {
   return response.data;
 }
 
-export async function getBrands() {
+export async function getBrands(search?: string) {
   const response = await apiClient.get<ListResponse<Brand>>("/brands", {
-    params: { limit: 100, offset: 0 },
+    params: { limit: 100, offset: 0, search: search || undefined },
+  });
+
+  return response.data;
+}
+
+export async function getCarModels(brandId?: number, search?: string) {
+  const response = await apiClient.get<ListResponse<CarModel>>("/car-models", {
+    params: {
+      brand_id: brandId || undefined,
+      limit: 100,
+      offset: 0,
+      search: search || undefined,
+    },
   });
 
   return response.data;

@@ -40,6 +40,7 @@ class ProductRepository:
         search: str | None = None,
         category_id: int | None = None,
         brand_id: int | None = None,
+        car_model_id: int | None = None,
         min_price: Decimal | None = None,
         max_price: Decimal | None = None,
     ) -> list[Product]:
@@ -47,6 +48,7 @@ class ProductRepository:
             search=search,
             category_id=category_id,
             brand_id=brand_id,
+            car_model_id=car_model_id,
             min_price=min_price,
             max_price=max_price,
         )
@@ -63,6 +65,7 @@ class ProductRepository:
         search: str | None = None,
         category_id: int | None = None,
         brand_id: int | None = None,
+        car_model_id: int | None = None,
         min_price: Decimal | None = None,
         max_price: Decimal | None = None,
     ) -> int:
@@ -72,6 +75,7 @@ class ProductRepository:
             search=search,
             category_id=category_id,
             brand_id=brand_id,
+            car_model_id=car_model_id,
             min_price=min_price,
             max_price=max_price,
         )
@@ -88,6 +92,7 @@ class ProductRepository:
             sku=payload.sku,
             category_id=payload.category_id,
             brand_id=payload.brand_id,
+            car_model_id=payload.car_model_id,
         )
         self.db.add(product)
         self.db.commit()
@@ -161,6 +166,7 @@ class ProductRepository:
         search: str | None,
         category_id: int | None,
         brand_id: int | None,
+        car_model_id: int | None,
         min_price: Decimal | None,
         max_price: Decimal | None,
     ):
@@ -170,6 +176,7 @@ class ProductRepository:
             search=search,
             category_id=category_id,
             brand_id=brand_id,
+            car_model_id=car_model_id,
             min_price=min_price,
             max_price=max_price,
         )
@@ -180,6 +187,7 @@ class ProductRepository:
         search: str | None,
         category_id: int | None,
         brand_id: int | None,
+        car_model_id: int | None,
         min_price: Decimal | None,
         max_price: Decimal | None,
     ):
@@ -196,6 +204,8 @@ class ProductRepository:
             statement = statement.where(Product.category_id == category_id)
         if brand_id is not None:
             statement = statement.where(Product.brand_id == brand_id)
+        if car_model_id is not None:
+            statement = statement.where(Product.car_model_id == car_model_id)
         if min_price is not None:
             statement = statement.where(Product.price >= min_price)
         if max_price is not None:

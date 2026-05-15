@@ -1,5 +1,6 @@
 export {
   getBrands,
+  getCarModels,
   getCategories,
   getProductBySlug,
   getProducts,
@@ -7,6 +8,7 @@ export {
 } from "./product.service";
 export type {
   Brand,
+  CarModel,
   Category,
   ListMeta,
   ListResponse,

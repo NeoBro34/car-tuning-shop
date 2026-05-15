@@ -317,3 +317,53 @@ Animation qo'shilgan asosiy fayllar:
 - `apps/frontend/features/cart/components/cart-item-list.tsx`
 - `apps/frontend/features/checkout/components/checkout-form.tsx`
 - `apps/frontend/features/admin/components/dashboard-card.tsx`
+
+## Phase 7.12 - Korea Automotive Catalog Management
+
+Qilingan o'zgarishlar:
+
+- Admin paneldan Brands, Categories va Car Models CRUD sectionlari olib tashlandi.
+- Admin panelda faqat Dashboard, Products, Orders va Users sectionlari qoldi.
+- Product form flow yangilandi:
+  - Brand
+  - Car Model
+  - Category
+  - Product
+- Brand o'zgarsa Car Model reset bo'ladi.
+- Car Model dropdown faqat tanlangan brand modellari bilan to'ladi.
+- Loading, empty state, search va pagination qo'shildi.
+- Product API'ga optional `car_model_id` qo'shildi.
+- Backend Product service tanlangan model brandga tegishli ekanini tekshiradi.
+- Brands, Categories va Car Models list API'lariga `search` query qo'shildi.
+- Re-run safe seed script qo'shildi.
+
+Seed:
+
+```bash
+cd apps/backend
+source venv/bin/activate
+alembic upgrade head
+python scripts/seed_catalog.py
+```
+
+Yangi asosiy fayllar:
+
+- `apps/backend/scripts/seed_catalog.py`
+- `apps/backend/alembic/versions/202605160001_add_product_car_model.py`
+- `apps/frontend/features/admin/components/admin-sidebar.tsx`
+- `apps/frontend/features/admin/components/product-form.tsx`
+
+Tekshiruv:
+
+```bash
+cd apps/backend
+./venv/bin/python -m pytest
+
+cd apps/frontend
+npm run build
+```
+
+Natija:
+
+- Backend tests: `19 passed`
+- Frontend build: muvaffaqiyatli o'tdi

@@ -28,8 +28,14 @@ def list_car_models(
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     offset: Annotated[int, Query(ge=0)] = 0,
     brand_id: Annotated[int | None, Query(gt=0)] = None,
+    search: Annotated[str | None, Query(min_length=1, max_length=120)] = None,
 ) -> CarModelListResponse:
-    return service.list_car_models(limit=limit, offset=offset, brand_id=brand_id)
+    return service.list_car_models(
+        limit=limit,
+        offset=offset,
+        brand_id=brand_id,
+        search=search,
+    )
 
 
 @router.get("/{car_model_id}", response_model=CarModelResponse)
@@ -67,4 +73,3 @@ def delete_car_model(
 ) -> Response:
     service.delete_car_model(car_model_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
