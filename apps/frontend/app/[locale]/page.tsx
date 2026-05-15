@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 
 const categories = [
   { nameKey: "turbo", metaKey: "turboMeta", icon: Zap },
@@ -52,7 +53,7 @@ export default function Home() {
   return (
     <div className="overflow-hidden">
       <section className="mx-auto grid min-h-[calc(100vh-5rem)] w-full max-w-7xl gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
-        <div className="space-y-7">
+        <Reveal className="space-y-7">
           <div className="inline-flex items-center gap-2 rounded-md border border-red-400/30 bg-red-500/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-red-200">
             <Gauge className="size-4" />
             {t("eyebrow")}
@@ -74,23 +75,23 @@ export default function Home() {
               {common("createAccount")}
             </Link>
           </div>
-          <div className="grid max-w-2xl grid-cols-3 gap-3">
+          <StaggerGroup className="grid max-w-2xl grid-cols-3 gap-3">
             {[
               ["1K+", t("statsParts")],
               ["24h", t("statsDispatch")],
               ["100%", t("statsFitment")],
             ].map(([value, label]) => (
-              <div className="auto-card rounded-md p-4" key={label}>
+              <StaggerItem className="auto-card rounded-md p-4" key={label}>
                 <p className="text-2xl font-black text-white">{value}</p>
                 <p className="mt-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
                   {label}
                 </p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
-        </div>
+          </StaggerGroup>
+        </Reveal>
 
-        <div className="relative">
+        <Reveal className="relative" delay={0.08}>
           <div className="absolute inset-8 rounded-full bg-red-500/20 blur-3xl" />
           <div className="auto-card relative overflow-hidden rounded-lg p-5">
             <div className="aspect-[4/3] rounded-md border border-white/10 bg-[linear-gradient(135deg,#18181b_0%,#09090b_42%,#7f1d1d_100%)] p-5">
@@ -125,31 +126,32 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((category) => {
             const Icon = category.icon;
 
             return (
-              <Link
-                className="auto-card group rounded-lg p-5 transition hover:-translate-y-1 hover:border-red-400/50"
-                href="/products"
-                key={category.nameKey}
-              >
-                <Icon className="size-7 text-red-300" />
-                <h2 className="mt-5 text-xl font-black text-white">
-                  {t(`categories.${category.nameKey}`)}
-                </h2>
-                <p className="mt-2 text-sm font-semibold text-zinc-500">
-                  {t(`categories.${category.metaKey}`)}
-                </p>
-              </Link>
+              <StaggerItem key={category.nameKey}>
+                <Link
+                  className="auto-card group block rounded-lg p-5 transition hover:-translate-y-1 hover:border-red-400/50"
+                  href="/products"
+                >
+                  <Icon className="size-7 text-red-300 transition group-hover:scale-105" />
+                  <h2 className="mt-5 text-xl font-black text-white">
+                    {t(`categories.${category.nameKey}`)}
+                  </h2>
+                  <p className="mt-2 text-sm font-semibold text-zinc-500">
+                    {t(`categories.${category.metaKey}`)}
+                  </p>
+                </Link>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGroup>
       </section>
 
       <section className="border-y border-white/10 bg-black/25">
@@ -162,25 +164,26 @@ export default function Home() {
               {t("popularHeadline")}
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <StaggerGroup className="grid gap-4 sm:grid-cols-3">
             {popularProducts.map((product) => (
-              <Link
-                className="rounded-lg border border-white/10 bg-zinc-950/70 p-5 transition hover:-translate-y-1 hover:border-orange-300/50"
-                href="/products"
-                key={product.nameKey}
-              >
-                <span className="rounded bg-red-500/15 px-2 py-1 text-xs font-black uppercase text-red-200">
-                  {t(`popular.${product.tagKey}`)}
-                </span>
-                <h3 className="mt-5 min-h-14 text-lg font-black text-white">
-                  {t(`popular.${product.nameKey}`)}
-                </h3>
-                <p className="mt-4 text-2xl font-black text-orange-300">
-                  {product.price}
-                </p>
-              </Link>
+              <StaggerItem key={product.nameKey}>
+                <Link
+                  className="block rounded-lg border border-white/10 bg-zinc-950/70 p-5 transition hover:-translate-y-1 hover:border-orange-300/50"
+                  href="/products"
+                >
+                  <span className="rounded bg-red-500/15 px-2 py-1 text-xs font-black uppercase text-red-200">
+                    {t(`popular.${product.tagKey}`)}
+                  </span>
+                  <h3 className="mt-5 min-h-14 text-lg font-black text-white">
+                    {t(`popular.${product.nameKey}`)}
+                  </h3>
+                  <p className="mt-4 text-2xl font-black text-orange-300">
+                    {product.price}
+                  </p>
+                </Link>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGroup>
         </div>
       </section>
 

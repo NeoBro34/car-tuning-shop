@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { ShoppingCart } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -24,6 +25,7 @@ type ProductCardProps = {
 export function ProductCard({ product, category, brand }: ProductCardProps) {
   const common = useTranslations("Common");
   const t = useTranslations("Products");
+  const shouldReduceMotion = useReducedMotion();
   const mainImage =
     product.images.find((image) => image.is_main) ?? product.images[0];
   const activePrice = product.discount_price ?? product.price;
@@ -45,7 +47,11 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
   }
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-zinc-950/82 shadow-xl shadow-black/20 transition hover:-translate-y-1 hover:border-red-400/45">
+    <motion.article
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-zinc-950/82 shadow-xl shadow-black/20 transition hover:border-red-400/45"
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+    >
       <Link
         className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-zinc-900"
         href={`/products/${product.slug}`}
@@ -112,16 +118,18 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
             {t("left", { count: product.stock_quantity })}
           </p>
         </div>
-        <button
+        <motion.button
+          whileTap={isOutOfStock || shouldReduceMotion ? undefined : { scale: 0.98 }}
+          whileHover={isOutOfStock || shouldReduceMotion ? undefined : { scale: 1.01 }}
           className="btn-primary mt-5 w-full gap-2 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
           disabled={isOutOfStock}
           onClick={handleAddToCart}
           type="button"
         >
-          <ShoppingCart className="size-4" />
+          <ShoppingCart className="size-4 transition group-hover:rotate-[-6deg]" />
           {isOutOfStock ? t("outOfStock") : common("addToCart")}
-        </button>
+        </motion.button>
       </div>
-    </article>
+    </motion.article>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -38,6 +39,7 @@ export function CheckoutForm() {
   const cart = useTranslations("Cart");
   const common = useTranslations("Common");
   const t = useTranslations("Checkout");
+  const shouldReduceMotion = useReducedMotion();
   const router = useRouter();
   const [hasLoadedCart, setHasLoadedCart] = useState(false);
   const { user } = useAuthStore();
@@ -91,16 +93,23 @@ export function CheckoutForm() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
-      <form className="auto-card rounded-lg p-5" onSubmit={handleSubmit(onSubmit)}>
+      <motion.form
+        animate={{ opacity: 1, y: 0 }}
+        className="auto-card rounded-lg p-5"
+        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+        onSubmit={handleSubmit(onSubmit)}
+        transition={{ duration: 0.24, ease: "easeOut" }}
+      >
         <h2 className="text-xl font-black text-white">{t("deliveryDetails")}</h2>
         <div className="mt-5 space-y-4">
           <label className="block">
             <span className="text-sm font-bold text-zinc-300">
               {common("customerName")}
             </span>
-            <input
+            <motion.input
               className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               type="text"
+              whileFocus={shouldReduceMotion ? undefined : { scale: 1.005 }}
               {...register("customer_name")}
             />
             {errors.customer_name ? (
@@ -114,9 +123,10 @@ export function CheckoutForm() {
             <span className="text-sm font-bold text-zinc-300">
               {common("phoneNumber")}
             </span>
-            <input
+            <motion.input
               className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               type="tel"
+              whileFocus={shouldReduceMotion ? undefined : { scale: 1.005 }}
               {...register("phone_number")}
             />
             {errors.phone_number ? (
@@ -130,8 +140,9 @@ export function CheckoutForm() {
             <span className="text-sm font-bold text-zinc-300">
               {common("address")}
             </span>
-            <textarea
+            <motion.textarea
               className="auto-input mt-2 min-h-32 w-full rounded-md px-3 py-2 text-sm"
+              whileFocus={shouldReduceMotion ? undefined : { scale: 1.005 }}
               {...register("address")}
             />
             {errors.address ? (
@@ -142,16 +153,33 @@ export function CheckoutForm() {
           </label>
         </div>
 
-        <button
+        <motion.button
+          animate={isSubmitting && !shouldReduceMotion ? { scale: 0.99 } : { scale: 1 }}
           className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
           disabled={isSubmitting || isLoading || !hasLoadedCart || items.length === 0}
+          transition={{ duration: 0.15, ease: "easeOut" }}
           type="submit"
+          whileHover={
+            isSubmitting || isLoading || !hasLoadedCart || items.length === 0 || shouldReduceMotion
+              ? undefined
+              : { y: -1 }
+          }
+          whileTap={
+            isSubmitting || isLoading || !hasLoadedCart || items.length === 0 || shouldReduceMotion
+              ? undefined
+              : { scale: 0.98 }
+          }
         >
           {isSubmitting ? t("creating") : t("createOrder")}
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
 
-      <aside className="auto-card rounded-lg p-5 lg:sticky lg:top-24">
+      <motion.aside
+        animate={{ opacity: 1, y: 0 }}
+        className="auto-card rounded-lg p-5 lg:sticky lg:top-24"
+        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+        transition={{ duration: 0.24, delay: 0.04, ease: "easeOut" }}
+      >
         <h2 className="text-lg font-black text-white">{t("summary")}</h2>
         {isLoading || !hasLoadedCart ? (
           <div className="mt-5 h-32 animate-pulse rounded-md bg-white/10" />
@@ -176,7 +204,7 @@ export function CheckoutForm() {
             {error}
           </p>
         ) : null}
-      </aside>
+      </motion.aside>
     </div>
   );
 }

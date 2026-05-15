@@ -1,5 +1,8 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 
 type DashboardCardProps = {
   icon: LucideIcon;
@@ -8,8 +11,14 @@ type DashboardCardProps = {
 };
 
 export function DashboardCard({ icon: Icon, label, value }: DashboardCardProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
-    <Card>
+    <motion.div
+      className="auto-card rounded-lg"
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+    >
       <CardContent className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm font-semibold text-zinc-400">{label}</p>
@@ -19,6 +28,6 @@ export function DashboardCard({ icon: Icon, label, value }: DashboardCardProps) 
           <Icon className="h-6 w-6" />
         </div>
       </CardContent>
-    </Card>
+    </motion.div>
   );
 }

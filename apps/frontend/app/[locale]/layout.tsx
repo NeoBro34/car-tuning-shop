@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { PageTransition } from "@/components/motion/page-transition";
 import { AuthInitializer } from "@/components/providers/auth-initializer";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import { routing } from "@/i18n/routing";
@@ -36,7 +37,9 @@ export default async function LocaleLayout({
       <AuthInitializer />
       <ToastProvider />
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <PageTransition>{children}</PageTransition>
+      </main>
       <Footer />
     </NextIntlClientProvider>
   );

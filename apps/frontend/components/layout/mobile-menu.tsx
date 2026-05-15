@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { LogOut, PackageSearch, Settings, User } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -59,35 +60,54 @@ export function MobileMenu({
   onLogout,
 }: MobileMenuProps) {
   const common = useTranslations("Common");
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div
-      className={cn(
-        "overflow-hidden border-t border-white/10 bg-zinc-950 shadow-lg shadow-black/30 transition-[max-height,opacity] duration-200 md:hidden",
-        isOpen ? "max-h-[42rem] opacity-100" : "max-h-0 opacity-0",
-      )}
-    >
-      <div className="mx-auto grid max-w-7xl gap-2 px-4 py-4">
+    <AnimatePresence initial={false}>
+      {isOpen ? (
+        <motion.div
+          animate={{ height: "auto", opacity: 1 }}
+          className="overflow-hidden border-t border-white/10 bg-zinc-950 shadow-lg shadow-black/30 md:hidden"
+          exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+          initial={shouldReduceMotion ? { opacity: 1 } : { height: 0, opacity: 0 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+        >
+      <motion.div
+        animate="show"
+        className="mx-auto grid max-w-7xl gap-2 px-4 py-4"
+        initial="hidden"
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: shouldReduceMotion ? 0 : 0.035 } },
+        }}
+      >
         {navItems.map((item) => {
           const active = isActivePath(pathname, item.href);
 
           return (
-            <Link
-              className={cn(
-                "flex min-h-11 items-center justify-between rounded-md px-3 text-sm font-bold text-zinc-300 transition",
-                active ? "bg-white text-zinc-950" : "hover:bg-white/10",
-              )}
-              href={item.href}
+            <motion.div
               key={item.href}
-              onClick={onClose}
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -8 },
+                show: { opacity: 1, x: 0 },
+              }}
             >
-              <span>{common(item.labelKey)}</span>
-              {item.href === "/cart" && cartCount > 0 ? (
-                <span className="rounded-full bg-red-600 px-2 py-1 text-xs font-black leading-none text-white">
-                  {cartCount}
-                </span>
-              ) : null}
-            </Link>
+              <Link
+                className={cn(
+                  "flex min-h-11 items-center justify-between rounded-md px-3 text-sm font-bold text-zinc-300 transition",
+                  active ? "bg-white text-zinc-950" : "hover:bg-white/10",
+                )}
+                href={item.href}
+                onClick={onClose}
+              >
+                <span>{common(item.labelKey)}</span>
+                {item.href === "/cart" && cartCount > 0 ? (
+                  <span className="rounded-full bg-red-600 px-2 py-1 text-xs font-black leading-none text-white">
+                    {cartCount}
+                  </span>
+                ) : null}
+              </Link>
+            </motion.div>
           );
         })}
 
@@ -175,7 +195,9 @@ export function MobileMenu({
             </Suspense>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import { QuantitySelector } from "@/features/products/components/quantity-selector";
@@ -31,6 +32,7 @@ export function ProductInfo({
 }: ProductInfoProps) {
   const common = useTranslations("Common");
   const t = useTranslations("ProductDetail");
+  const shouldReduceMotion = useReducedMotion();
   const addItem = useCartStore((state) => state.addItem);
   const discountPercentage = getDiscountPercentage(
     product.price,
@@ -53,7 +55,12 @@ export function ProductInfo({
   }
 
   return (
-    <section className="auto-card rounded-lg p-5 sm:p-6 lg:sticky lg:top-24">
+    <motion.section
+      animate={{ opacity: 1, y: 0 }}
+      className="auto-card rounded-lg p-5 sm:p-6 lg:sticky lg:top-24"
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
+      transition={{ duration: 0.28, delay: 0.04, ease: "easeOut" }}
+    >
       <div className="flex flex-wrap gap-2 text-xs font-bold text-zinc-400">
         <span className="rounded bg-white/[0.06] px-2 py-1">
           {category?.name ?? `${common("category")} #${product.category_id}`}
@@ -106,15 +113,17 @@ export function ProductInfo({
           onChange={onQuantityChange}
           value={quantity}
         />
-        <button
+        <motion.button
+          whileHover={isOutOfStock || shouldReduceMotion ? undefined : { scale: 1.01 }}
+          whileTap={isOutOfStock || shouldReduceMotion ? undefined : { scale: 0.98 }}
           className="btn-primary min-h-11 flex-1 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
           disabled={isOutOfStock}
           onClick={handleAddToCart}
           type="button"
         >
           {isOutOfStock ? common("outOfStock") : common("addToCart")}
-        </button>
+        </motion.button>
       </div>
-    </section>
+    </motion.section>
   );
 }

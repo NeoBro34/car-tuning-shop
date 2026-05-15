@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Gauge, Menu, ShoppingBag, X } from "lucide-react";
@@ -34,6 +35,7 @@ function isActivePath(pathname: string, href: string) {
 export function Navbar() {
   const common = useTranslations("Common");
   const t = useTranslations("Navbar");
+  const shouldReduceMotion = useReducedMotion();
   const pathname = usePathname();
   const router = useRouter();
   const cartCount = useCartCount();
@@ -91,9 +93,18 @@ export function Navbar() {
               >
                   {common(item.labelKey)}
                 {item.href === "/cart" && cartCount > 0 ? (
-                  <span className="ml-2 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-black leading-none text-white">
-                    {cartCount}
-                  </span>
+                  <AnimatePresence mode="popLayout">
+                    <motion.span
+                      animate={{ scale: 1 }}
+                      className="ml-2 inline-flex rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-black leading-none text-white"
+                      exit={{ scale: 0.85, opacity: 0 }}
+                      initial={shouldReduceMotion ? { scale: 1 } : { scale: 0.82 }}
+                      key={cartCount}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                    >
+                      {cartCount}
+                    </motion.span>
+                  </AnimatePresence>
                 ) : null}
               </Link>
             );
@@ -120,9 +131,18 @@ export function Navbar() {
           >
             <ShoppingBag aria-hidden="true" className="size-5" />
             {cartCount > 0 ? (
-              <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1 text-[10px] font-black leading-none text-white ring-2 ring-zinc-950">
-                {cartCount}
-              </span>
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  animate={{ scale: 1, y: 0 }}
+                  className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1 text-[10px] font-black leading-none text-white ring-2 ring-zinc-950"
+                  exit={{ scale: 0.85, opacity: 0 }}
+                  initial={shouldReduceMotion ? { scale: 1 } : { scale: 0.8, y: -2 }}
+                  key={cartCount}
+                  transition={{ duration: 0.18, ease: "easeOut" }}
+                >
+                  {cartCount}
+                </motion.span>
+              </AnimatePresence>
             ) : null}
           </Link>
           {isHydrated && isAuthenticated ? (
@@ -186,9 +206,18 @@ export function Navbar() {
       >
         <ShoppingBag aria-hidden="true" className="size-5" />
         {cartCount > 0 ? (
-          <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-white text-[10px] font-black text-zinc-950 ring-2 ring-zinc-950">
-            {cartCount}
-          </span>
+          <AnimatePresence mode="popLayout">
+            <motion.span
+              animate={{ scale: 1, y: 0 }}
+              className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-white text-[10px] font-black text-zinc-950 ring-2 ring-zinc-950"
+              exit={{ scale: 0.85, opacity: 0 }}
+              initial={shouldReduceMotion ? { scale: 1 } : { scale: 0.8, y: -2 }}
+              key={cartCount}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+            >
+              {cartCount}
+            </motion.span>
+          </AnimatePresence>
         ) : null}
       </Link>
     </header>

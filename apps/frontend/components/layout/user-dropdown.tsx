@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
   ChevronDown,
@@ -35,6 +36,7 @@ function getInitials(user: AuthUser) {
 export function UserDropdown({ user }: UserDropdownProps) {
   const common = useTranslations("Common");
   const navbar = useTranslations("Navbar");
+  const shouldReduceMotion = useReducedMotion();
   const router = useRouter();
   const logout = useAuthStore((state) => state.logout);
   const [isOpen, setIsOpen] = useState(false);
@@ -116,16 +118,17 @@ export function UserDropdown({ user }: UserDropdownProps) {
         />
       </button>
 
-      <div
-        className={cn(
-          "absolute right-0 top-[calc(100%+0.75rem)] z-50 w-64 origin-top-right rounded-lg border border-white/10 bg-zinc-950/98 p-2 shadow-2xl shadow-black/50 backdrop-blur-xl transition duration-150",
-          isOpen
-            ? "translate-y-0 scale-100 opacity-100"
-            : "pointer-events-none -translate-y-1 scale-95 opacity-0",
-        )}
-        role="menu"
-      >
-        <div className="border-b border-white/10 p-3">
+      <AnimatePresence>
+        {isOpen ? (
+          <motion.div
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-64 origin-top-right rounded-lg border border-white/10 bg-zinc-950/98 p-2 shadow-2xl shadow-black/50 backdrop-blur-xl"
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: -4 }}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.97, y: -4 }}
+            role="menu"
+            transition={{ duration: 0.15, ease: "easeOut" }}
+          >
+          <div className="border-b border-white/10 p-3">
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-md bg-gradient-to-br from-red-500 to-orange-500 text-sm font-black text-white">
               {initials}
@@ -170,7 +173,9 @@ export function UserDropdown({ user }: UserDropdownProps) {
           <LogOut aria-hidden="true" className="size-4" />
           {common("logout")}
         </button>
-      </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

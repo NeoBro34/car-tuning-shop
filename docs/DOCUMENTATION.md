@@ -2,6 +2,80 @@
 
 Bu hujjat NextJS frontend bo'yicha qilingan o'zgarishlarni qisqa va bir joyda jamlaydi.
 
+## Dev Server
+
+Turbopack panic sabab dev script Webpack bilan ishlaydi:
+
+```bash
+cd apps/frontend
+npm run dev
+```
+
+## Build Test
+
+```bash
+cd apps/frontend
+npm run build
+```
+
+Build muvaffaqiyatli o'tdi.
+
+## Route Test
+
+Tekshirilgan route'lar:
+
+- `/products` -> `/en/products`
+- `/en/products` -> `200 OK`
+- `/uz/products`
+- `/ru/products`
+- `/kr/products`
+- `/uz/cart` auth bo'lmasa `/uz/login?redirect=%2Fuz%2Fcart`
+
+## Manual Test Checklist
+
+Loading state:
+
+- DevTools Network orqali `Slow 3G` yoqing.
+- `/en/products`, product detail va `/en/cart` sahifalarini oching.
+- Skeleton shimmer chiqishini tekshiring.
+
+Empty state:
+
+- Products search orqali mavjud bo'lmagan query kiriting.
+- Bo'sh cart holatini tekshiring.
+- Orders bo'sh holatini tekshiring.
+
+Error state:
+
+- Backendni vaqtincha o'chiring.
+- Products/Cart/Admin Orders sahifalarida error card va retry buttonni tekshiring.
+
+Navbar:
+
+- Guest holatda Login/Register ko'rinadi.
+- Login holatda avatar dropdown ko'rinadi.
+- Dropdown tashqariga bosilganda va `Escape` bosilganda yopiladi.
+- Mobile hamburger menu ishlaydi.
+
+Responsive:
+
+- 390px mobile
+- 768px tablet
+- 1024px laptop
+- 1440px desktop
+
+Tekshiriladigan joylar:
+
+- Navbar
+- Mobile menu
+- User dropdown
+- Language switcher
+- Products grid
+- Product detail
+- Cart/Checkout forms
+- Admin layout
+- Skeleton/empty/error states
+
 ## Umumiy Qoida
 
 - Backend o'zgartirilmadi.
@@ -197,76 +271,49 @@ Admin Unauthorized:
 
 - reusable unauthorized error state ishlatildi.
 
-## Dev Server
+## Phase 7.11 - Animations va Micro Interactions
 
-Turbopack panic sabab dev script Webpack bilan ishlaydi:
+Maqsad:
 
-```bash
-cd apps/frontend
-npm run dev
-```
+- UI'ni premium, smooth va professional his qildirish.
+- Animatsiyalar subtle bo'lishi, flashy bo'lmasligi va mobile performancega zarar bermasligi.
 
-## Build Test
+Qilingan o'zgarishlar:
 
-```bash
-cd apps/frontend
-npm run build
-```
+- `framer-motion` o'rnatildi va frontend dependency sifatida qo'shildi.
+- Page transition animatsiyasi qo'shildi.
+- Home page hero, stats, category va popular product bloklariga reveal/stagger animatsiya qo'shildi.
+- Product grid uchun stagger entrance animatsiya qo'shildi.
+- Product card hover animatsiyasi va add to cart button press/hover animatsiyasi qo'shildi.
+- Product detail gallery image switch va thumbnail interaction animatsiyasi qo'shildi.
+- Cart badge count o'zgarganda subtle pop animatsiya qo'shildi.
+- User dropdown smooth open/close animatsiyasi qo'shildi.
+- Mobile menu slide va menu item stagger animatsiyasi qo'shildi.
+- Cart item enter/remove/layout animatsiyasi qo'shildi.
+- Checkout form input focus va submit button micro interaction qo'shildi.
+- Admin dashboard card hover animatsiyasi qo'shildi.
+- Reusable modal animation primitive qo'shildi.
+- Existing skeleton shimmer saqlandi.
+- `prefers-reduced-motion` holati hisobga olindi.
+- Backend o'zgartirilmadi.
 
-Build muvaffaqiyatli o'tdi.
+Yangi componentlar:
 
-## Route Test
+- `apps/frontend/components/motion/page-transition.tsx`
+- `apps/frontend/components/motion/reveal.tsx`
+- `apps/frontend/components/ui/modal.tsx`
 
-Tekshirilgan route'lar:
+Animation qo'shilgan asosiy fayllar:
 
-- `/products` -> `/en/products`
-- `/en/products` -> `200 OK`
-- `/uz/products`
-- `/ru/products`
-- `/kr/products`
-- `/uz/cart` auth bo'lmasa `/uz/login?redirect=%2Fuz%2Fcart`
-
-## Manual Test Checklist
-
-Loading state:
-
-- DevTools Network orqali `Slow 3G` yoqing.
-- `/en/products`, product detail va `/en/cart` sahifalarini oching.
-- Skeleton shimmer chiqishini tekshiring.
-
-Empty state:
-
-- Products search orqali mavjud bo'lmagan query kiriting.
-- Bo'sh cart holatini tekshiring.
-- Orders bo'sh holatini tekshiring.
-
-Error state:
-
-- Backendni vaqtincha o'chiring.
-- Products/Cart/Admin Orders sahifalarida error card va retry buttonni tekshiring.
-
-Navbar:
-
-- Guest holatda Login/Register ko'rinadi.
-- Login holatda avatar dropdown ko'rinadi.
-- Dropdown tashqariga bosilganda va `Escape` bosilganda yopiladi.
-- Mobile hamburger menu ishlaydi.
-
-Responsive:
-
-- 390px mobile
-- 768px tablet
-- 1024px laptop
-- 1440px desktop
-
-Tekshiriladigan joylar:
-
-- Navbar
-- Mobile menu
-- User dropdown
-- Language switcher
-- Products grid
-- Product detail
-- Cart/Checkout forms
-- Admin layout
-- Skeleton/empty/error states
+- `apps/frontend/app/[locale]/layout.tsx`
+- `apps/frontend/app/[locale]/page.tsx`
+- `apps/frontend/components/layout/navbar.tsx`
+- `apps/frontend/components/layout/mobile-menu.tsx`
+- `apps/frontend/components/layout/user-dropdown.tsx`
+- `apps/frontend/features/products/components/product-grid.tsx`
+- `apps/frontend/features/products/components/product-card.tsx`
+- `apps/frontend/features/products/components/product-gallery.tsx`
+- `apps/frontend/features/products/components/product-info.tsx`
+- `apps/frontend/features/cart/components/cart-item-list.tsx`
+- `apps/frontend/features/checkout/components/checkout-form.tsx`
+- `apps/frontend/features/admin/components/dashboard-card.tsx`

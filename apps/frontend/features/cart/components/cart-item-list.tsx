@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
@@ -14,6 +15,7 @@ type CartItemListProps = {
 export function CartItemList({ items }: CartItemListProps) {
   const common = useTranslations("Common");
   const t = useTranslations("Cart");
+  const shouldReduceMotion = useReducedMotion();
   const { isLoading, removeItem, updateQuantity } = useCartStore();
 
   async function handleQuantityChange(item: CartItem, quantity: number) {
@@ -38,14 +40,21 @@ export function CartItemList({ items }: CartItemListProps) {
 
   return (
     <div className="space-y-4">
-      {items.map((item) => {
-        const activePrice = item.product.discount_price ?? item.product.price;
-        const isAtStockLimit = item.quantity >= item.product.stock_quantity;
+      <AnimatePresence initial={false}>
+        {items.map((item) => {
+          const activePrice = item.product.discount_price ?? item.product.price;
+          const isAtStockLimit = item.quantity >= item.product.stock_quantity;
 
-        return (
-          <article
+          return (
+            <motion.article
+              animate={{ opacity: 1, x: 0 }}
             className="auto-card rounded-lg p-4"
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -12 }}
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -10 }}
             key={item.id}
+              layout
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              whileHover={shouldReduceMotion ? undefined : { y: -2 }}
           >
             <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start">
               <div>
@@ -114,9 +123,10 @@ export function CartItemList({ items }: CartItemListProps) {
                 </button>
               </div>
             </div>
-          </article>
-        );
-      })}
+            </motion.article>
+          );
+        })}
+      </AnimatePresence>
     </div>
   );
 }
