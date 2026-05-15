@@ -10,10 +10,14 @@ type AdminGuardProps = {
 
 const adminRoles = new Set(["ADMIN", "SUPER_ADMIN"]);
 
+function normalizeRole(role?: string) {
+  return role?.toUpperCase();
+}
+
 export function AdminGuard({ children }: AdminGuardProps) {
   const router = useRouter();
   const { isAuthenticated, isHydrated, user } = useAuthStore();
-  const isAdmin = user ? adminRoles.has(user.role) : false;
+  const isAdmin = user ? adminRoles.has(normalizeRole(user.role) ?? "") : false;
 
   useEffect(() => {
     if (!isHydrated) {
@@ -33,7 +37,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
   if (!isHydrated || !isAuthenticated || !user) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="h-96 animate-pulse rounded-lg bg-zinc-100" />
+        <div className="h-96 animate-pulse rounded-lg bg-white/10" />
       </div>
     );
   }
@@ -41,7 +45,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
   if (!isAdmin) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-700">
+        <div className="rounded-lg border border-red-400/30 bg-red-950/40 p-6 text-red-200">
           Admin access is required.
         </div>
       </div>

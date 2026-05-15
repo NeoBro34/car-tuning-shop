@@ -10,18 +10,18 @@ type CartSummaryProps = {
 
 export function CartSummary({ subtotal, totalItems }: CartSummaryProps) {
   return (
-    <aside className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-bold text-zinc-950">Order summary</h2>
+    <aside className="auto-card rounded-lg p-5 lg:sticky lg:top-24">
+      <h2 className="text-lg font-black text-white">Order summary</h2>
       <div className="mt-4 space-y-3 text-sm">
-        <div className="flex justify-between gap-4 text-zinc-600">
+        <div className="flex justify-between gap-4 text-zinc-400">
           <span>Items</span>
           <span className="font-semibold">{totalItems}</span>
         </div>
-        <div className="flex justify-between gap-4 text-zinc-600">
+        <div className="flex justify-between gap-4 text-zinc-400">
           <span>Subtotal</span>
           <span className="font-semibold">{formatCartPrice(subtotal)}</span>
         </div>
-        <div className="flex justify-between gap-4 border-t border-zinc-200 pt-3 text-base font-black text-zinc-950">
+        <div className="flex justify-between gap-4 border-t border-white/10 pt-3 text-base font-black text-white">
           <span>Total</span>
           <span>{formatCartPrice(subtotal)}</span>
         </div>

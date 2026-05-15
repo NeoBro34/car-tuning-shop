@@ -20,9 +20,9 @@ export function Pagination({
   return (
     <nav
       aria-label="Products pagination"
-      className="flex flex-col gap-3 border-t border-zinc-200 pt-6 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between"
     >
-      <p className="text-sm text-zinc-600">
+      <p className="text-sm text-zinc-400">
         Page <span className="font-semibold">{currentPage}</span> of{" "}
         <span className="font-semibold">{totalPages}</span>
       </p>

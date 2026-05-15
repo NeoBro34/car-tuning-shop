@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft, BadgeCheck, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ProductGallery } from "@/features/products/components/product-gallery";
 import { ProductInfo } from "@/features/products/components/product-info";
@@ -88,11 +89,11 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   if (isLoading) {
     return (
-      <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mb-6 h-5 w-32 animate-pulse rounded bg-zinc-100" />
+      <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-6 h-5 w-32 animate-pulse rounded bg-white/10" />
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="aspect-square animate-pulse rounded-lg bg-zinc-100" />
-          <div className="h-[30rem] animate-pulse rounded-lg bg-zinc-100" />
+          <div className="aspect-square animate-pulse rounded-lg bg-white/10" />
+          <div className="h-[30rem] animate-pulse rounded-lg bg-white/10" />
         </div>
       </section>
     );
@@ -100,13 +101,13 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   if (error || !product) {
     return (
-      <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <Link className="text-sm font-semibold text-red-600" href="/products">
+      <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <Link className="text-sm font-semibold text-red-300" href="/products">
           Back to products
         </Link>
-        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-6">
-          <h1 className="font-bold text-red-900">Unable to load product</h1>
-          <p className="mt-2 text-sm leading-6 text-red-700">
+        <div className="mt-6 rounded-lg border border-red-400/30 bg-red-950/40 p-6">
+          <h1 className="font-bold text-red-100">Unable to load product</h1>
+          <p className="mt-2 text-sm leading-6 text-red-200">
             {error ?? "Product not found."}
           </p>
         </div>
@@ -115,8 +116,12 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <Link className="text-sm font-semibold text-red-600" href="/products">
+    <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <Link
+        className="inline-flex items-center gap-2 text-sm font-bold text-red-300 transition hover:text-red-100"
+        href="/products"
+      >
+        <ArrowLeft className="size-4" />
         Back to products
       </Link>
 
@@ -129,6 +134,52 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
           product={product}
           quantity={quantity}
         />
+      </div>
+
+      <div className="mt-8 grid gap-4 lg:grid-cols-3">
+        <section className="auto-card rounded-lg p-5">
+          <BadgeCheck className="size-6 text-red-300" />
+          <h2 className="mt-4 text-lg font-black text-white">Specs</h2>
+          <div className="mt-4 grid gap-3 text-sm">
+            <p className="flex justify-between gap-4 border-b border-white/10 pb-3 text-zinc-400">
+              <span>SKU</span>
+              <span className="font-bold text-white">{product.sku}</span>
+            </p>
+            <p className="flex justify-between gap-4 border-b border-white/10 pb-3 text-zinc-400">
+              <span>Category</span>
+              <span className="font-bold text-white">
+                {categoryById.get(product.category_id)?.name ??
+                  `#${product.category_id}`}
+              </span>
+            </p>
+            <p className="flex justify-between gap-4 text-zinc-400">
+              <span>Brand</span>
+              <span className="font-bold text-white">
+                {brandById.get(product.brand_id)?.name ?? `#${product.brand_id}`}
+              </span>
+            </p>
+          </div>
+        </section>
+        <section className="auto-card rounded-lg p-5">
+          <ShieldCheck className="size-6 text-orange-300" />
+          <h2 className="mt-4 text-lg font-black text-white">Compatibility</h2>
+          <p className="mt-4 text-sm leading-7 text-zinc-400">
+            Check product description and fitment data before ordering. This
+            catalog keeps category, brand, SKU, and stock details visible for
+            faster compatibility decisions.
+          </p>
+        </section>
+        <section className="auto-card rounded-lg p-5">
+          <Truck className="size-6 text-emerald-300" />
+          <h2 className="mt-4 text-lg font-black text-white">Delivery info</h2>
+          <div className="mt-4 space-y-3 text-sm font-semibold text-zinc-400">
+            <p className="flex items-center gap-2">
+              <PackageCheck className="size-4 text-red-300" />
+              Packed after order confirmation
+            </p>
+            <p>Stock visible before checkout: {product.stock_quantity}</p>
+          </div>
+        </section>
       </div>
 
       <RelatedProducts

@@ -25,16 +25,13 @@ export function QuantitySelector({
 
   return (
     <div>
-      <label
-        className="text-sm font-semibold text-zinc-700"
-        htmlFor="quantity"
-      >
+      <label className="text-sm font-bold text-zinc-300" htmlFor="quantity">
         Quantity
       </label>
-      <div className="mt-2 grid h-11 w-36 grid-cols-[2.75rem_1fr_2.75rem] overflow-hidden rounded-md border border-zinc-300 bg-white">
+      <div className="mt-2 grid h-11 w-36 grid-cols-[2.75rem_1fr_2.75rem] overflow-hidden rounded-md border border-white/10 bg-black/25">
         <button
           aria-label="Decrease quantity"
-          className="border-r border-zinc-300 font-bold text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40"
+          className="border-r border-white/10 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
           disabled={isDisabled || safeValue <= 1}
           onClick={() => setQuantity(safeValue - 1)}
           type="button"
@@ -42,7 +39,7 @@ export function QuantitySelector({
           -
         </button>
         <input
-          className="w-full text-center text-sm font-bold outline-none disabled:bg-zinc-100"
+          className="w-full bg-transparent text-center text-sm font-bold text-white outline-none disabled:bg-zinc-900"
           disabled={isDisabled}
           id="quantity"
           max={max}
@@ -53,7 +50,7 @@ export function QuantitySelector({
         />
         <button
           aria-label="Increase quantity"
-          className="border-l border-zinc-300 font-bold text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40"
+          className="border-l border-white/10 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
           disabled={isDisabled || safeValue >= max}
           onClick={() => setQuantity(safeValue + 1)}
           type="button"

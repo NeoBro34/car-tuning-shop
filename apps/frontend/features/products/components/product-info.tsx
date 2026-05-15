@@ -50,23 +50,23 @@ export function ProductInfo({
   }
 
   return (
-    <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm sm:p-6">
-      <div className="flex flex-wrap gap-2 text-xs font-semibold text-zinc-600">
-        <span className="rounded-md bg-zinc-100 px-2 py-1">
+    <section className="auto-card rounded-lg p-5 sm:p-6 lg:sticky lg:top-24">
+      <div className="flex flex-wrap gap-2 text-xs font-bold text-zinc-400">
+        <span className="rounded bg-white/[0.06] px-2 py-1">
           {category?.name ?? `Category #${product.category_id}`}
         </span>
-        <span className="rounded-md bg-zinc-100 px-2 py-1">
+        <span className="rounded bg-white/[0.06] px-2 py-1">
           {brand?.name ?? `Brand #${product.brand_id}`}
         </span>
-        <span className="rounded-md bg-zinc-100 px-2 py-1">SKU {product.sku}</span>
+        <span className="rounded bg-white/[0.06] px-2 py-1">SKU {product.sku}</span>
       </div>
 
-      <h1 className="mt-4 text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl">
+      <h1 className="mt-4 text-3xl font-black uppercase tracking-normal text-white sm:text-4xl">
         {product.name}
       </h1>
 
       <div className="mt-5 flex flex-wrap items-end gap-3">
-        <p className="text-3xl font-black text-zinc-950">
+        <p className="text-3xl font-black text-white">
           {formatPrice(activePrice)}
         </p>
         {product.discount_price ? (
@@ -75,7 +75,7 @@ export function ProductInfo({
               {formatPrice(product.price)}
             </p>
             {discountPercentage ? (
-              <p className="mb-1 rounded-md bg-red-100 px-2 py-1 text-sm font-bold text-red-700">
+              <p className="mb-1 rounded bg-red-500 px-2 py-1 text-sm font-black text-white">
                 {discountPercentage}% off
               </p>
             ) : null}
@@ -85,13 +85,13 @@ export function ProductInfo({
 
       <p
         className={`mt-4 text-sm font-bold ${
-          isOutOfStock ? "text-red-700" : "text-emerald-700"
+          isOutOfStock ? "text-red-300" : "text-emerald-300"
         }`}
       >
         {isOutOfStock ? "Out of stock" : `${product.stock_quantity} in stock`}
       </p>
 
-      <p className="mt-5 whitespace-pre-line text-sm leading-7 text-zinc-600">
+      <p className="mt-5 whitespace-pre-line text-sm leading-7 text-zinc-400">
         {product.description}
       </p>
 
@@ -102,7 +102,7 @@ export function ProductInfo({
           value={quantity}
         />
         <button
-          className="btn-primary min-h-11 flex-1 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600"
+          className="btn-primary min-h-11 flex-1 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
           disabled={isOutOfStock}
           onClick={handleAddToCart}
           type="button"

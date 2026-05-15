@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="auto-shell flex min-h-full flex-col bg-background text-foreground">
         <AuthInitializer />
         <ToastProvider />
         <Navbar />

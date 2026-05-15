@@ -89,12 +89,12 @@ export function AdminUsersPage() {
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-lg font-bold text-zinc-950">Users</h2>
+        <h2 className="text-lg font-black text-white">Users</h2>
       </CardHeader>
       <CardContent>
-        {isLoading ? <div className="h-64 animate-pulse rounded-md bg-zinc-100" /> : null}
+        {isLoading ? <div className="h-64 animate-pulse rounded-md bg-white/10" /> : null}
         {!isLoading && error ? (
-          <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-700">
+          <div className="rounded-md border border-red-400/30 bg-red-950/40 p-4 text-red-200">
             {error}
           </div>
         ) : null}

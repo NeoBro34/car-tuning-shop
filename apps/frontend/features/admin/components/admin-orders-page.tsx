@@ -117,12 +117,12 @@ export function AdminOrdersPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-bold text-zinc-950">Orders</h2>
+          <h2 className="text-lg font-black text-white">Orders</h2>
         </CardHeader>
         <CardContent>
-          {isLoading ? <div className="h-64 animate-pulse rounded-md bg-zinc-100" /> : null}
+          {isLoading ? <div className="h-64 animate-pulse rounded-md bg-white/10" /> : null}
           {!isLoading && error ? (
-            <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-700">
+            <div className="rounded-md border border-red-400/30 bg-red-950/40 p-4 text-red-200">
               {error}
             </div>
           ) : null}
@@ -135,7 +135,7 @@ export function AdminOrdersPage() {
       {selectedOrder ? (
         <Card>
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-bold text-zinc-950">
+            <h2 className="text-lg font-black text-white">
               Order #{selectedOrder.id}
             </h2>
             <Button
@@ -146,7 +146,7 @@ export function AdminOrdersPage() {
               Close
             </Button>
           </CardHeader>
-          <CardContent className="space-y-4 text-sm text-zinc-700">
+          <CardContent className="space-y-4 text-sm text-zinc-300">
             <div className="grid gap-3 sm:grid-cols-2">
               <p>
                 <span className="font-bold">Customer:</span>{" "}
@@ -167,10 +167,10 @@ export function AdminOrdersPage() {
                 {formatCartPrice(selectedOrder.total_price)}
               </p>
             </div>
-            <div className="rounded-md border border-zinc-200">
+            <div className="rounded-md border border-white/10">
               {selectedOrder.items.map((item) => (
                 <div
-                  className="flex justify-between gap-4 border-b border-zinc-100 p-3 last:border-b-0"
+                  className="flex justify-between gap-4 border-b border-white/10 p-3 last:border-b-0"
                   key={item.id}
                 >
                   <span>Product #{item.product_id} x {item.quantity}</span>

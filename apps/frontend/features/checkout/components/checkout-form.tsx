@@ -87,52 +87,49 @@ export function CheckoutForm() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
-      <form
-        className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <h2 className="text-xl font-bold text-zinc-950">Delivery details</h2>
+      <form className="auto-card rounded-lg p-5" onSubmit={handleSubmit(onSubmit)}>
+        <h2 className="text-xl font-black text-white">Delivery details</h2>
         <div className="mt-5 space-y-4">
           <label className="block">
-            <span className="text-sm font-semibold text-zinc-700">
+            <span className="text-sm font-bold text-zinc-300">
               Customer name
             </span>
             <input
-              className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+              className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               type="text"
               {...register("customer_name")}
             />
             {errors.customer_name ? (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1 text-sm text-red-300">
                 {errors.customer_name.message}
               </p>
             ) : null}
           </label>
 
           <label className="block">
-            <span className="text-sm font-semibold text-zinc-700">
+            <span className="text-sm font-bold text-zinc-300">
               Phone number
             </span>
             <input
-              className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+              className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               type="tel"
               {...register("phone_number")}
             />
             {errors.phone_number ? (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1 text-sm text-red-300">
                 {errors.phone_number.message}
               </p>
             ) : null}
           </label>
 
           <label className="block">
-            <span className="text-sm font-semibold text-zinc-700">Address</span>
+            <span className="text-sm font-bold text-zinc-300">Address</span>
             <textarea
-              className="mt-2 min-h-32 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+              className="auto-input mt-2 min-h-32 w-full rounded-md px-3 py-2 text-sm"
               {...register("address")}
             />
             {errors.address ? (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1 text-sm text-red-300">
                 {errors.address.message}
               </p>
             ) : null}
@@ -140,7 +137,7 @@ export function CheckoutForm() {
         </div>
 
         <button
-          className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600"
+          className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none"
           disabled={isSubmitting || isLoading || !hasLoadedCart || items.length === 0}
           type="submit"
         >
@@ -148,28 +145,28 @@ export function CheckoutForm() {
         </button>
       </form>
 
-      <aside className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-bold text-zinc-950">Checkout summary</h2>
+      <aside className="auto-card rounded-lg p-5 lg:sticky lg:top-24">
+        <h2 className="text-lg font-black text-white">Checkout summary</h2>
         {isLoading || !hasLoadedCart ? (
-          <div className="mt-5 h-32 animate-pulse rounded-md bg-zinc-100" />
+          <div className="mt-5 h-32 animate-pulse rounded-md bg-white/10" />
         ) : (
           <div className="mt-4 space-y-3 text-sm">
-            <div className="flex justify-between gap-4 text-zinc-600">
+            <div className="flex justify-between gap-4 text-zinc-400">
               <span>Items</span>
               <span className="font-semibold">{totalItems}</span>
             </div>
-            <div className="flex justify-between gap-4 text-zinc-600">
+            <div className="flex justify-between gap-4 text-zinc-400">
               <span>Subtotal</span>
               <span className="font-semibold">{formatCartPrice(subtotal)}</span>
             </div>
-            <div className="flex justify-between gap-4 border-t border-zinc-200 pt-3 text-base font-black text-zinc-950">
+            <div className="flex justify-between gap-4 border-t border-white/10 pt-3 text-base font-black text-white">
               <span>Total</span>
               <span>{formatCartPrice(subtotal)}</span>
             </div>
           </div>
         )}
         {error ? (
-          <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <p className="mt-4 rounded-md border border-red-400/30 bg-red-950/40 p-3 text-sm text-red-200">
             {error}
           </p>
         ) : null}

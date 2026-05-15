@@ -60,21 +60,21 @@ export function ProductForm({
   return (
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(submit)}>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Name</span>
+        <span className="text-sm font-bold text-zinc-300">Name</span>
         <Input className="mt-2" {...register("name")} />
-        {errors.name ? <p className="mt-1 text-sm text-red-600">{errors.name.message}</p> : null}
+        {errors.name ? <p className="mt-1 text-sm text-red-300">{errors.name.message}</p> : null}
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Slug</span>
+        <span className="text-sm font-bold text-zinc-300">Slug</span>
         <Input className="mt-2" {...register("slug")} />
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">SKU</span>
+        <span className="text-sm font-bold text-zinc-300">SKU</span>
         <Input className="mt-2" {...register("sku")} />
-        {errors.sku ? <p className="mt-1 text-sm text-red-600">{errors.sku.message}</p> : null}
+        {errors.sku ? <p className="mt-1 text-sm text-red-300">{errors.sku.message}</p> : null}
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Stock</span>
+        <span className="text-sm font-bold text-zinc-300">Stock</span>
         <Input
           className="mt-2"
           type="number"
@@ -82,11 +82,11 @@ export function ProductForm({
         />
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Price</span>
+        <span className="text-sm font-bold text-zinc-300">Price</span>
         <Input className="mt-2" type="number" step="0.01" {...register("price")} />
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Discount price</span>
+        <span className="text-sm font-bold text-zinc-300">Discount price</span>
         <Input
           className="mt-2"
           type="number"
@@ -95,7 +95,7 @@ export function ProductForm({
         />
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Category</span>
+        <span className="text-sm font-bold text-zinc-300">Category</span>
         <Select
           className="mt-2"
           {...register("category_id", { valueAsNumber: true })}
@@ -109,7 +109,7 @@ export function ProductForm({
         </Select>
       </label>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Brand</span>
+        <span className="text-sm font-bold text-zinc-300">Brand</span>
         <Select className="mt-2" {...register("brand_id", { valueAsNumber: true })}>
           <option value={0}>Select brand</option>
           {brands.map((brand) => (
@@ -120,9 +120,9 @@ export function ProductForm({
         </Select>
       </label>
       <label className="block md:col-span-2">
-        <span className="text-sm font-semibold text-zinc-700">Description</span>
+        <span className="text-sm font-bold text-zinc-300">Description</span>
         <textarea
-          className="mt-2 min-h-24 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+          className="auto-input mt-2 min-h-24 w-full rounded-md px-3 py-2 text-sm"
           {...register("description")}
         />
       </label>

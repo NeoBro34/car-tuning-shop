@@ -24,7 +24,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   return (
     <section className="space-y-3">
-      <div className="flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
+      <div className="flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-zinc-950 shadow-2xl shadow-black/30">
         {activeImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -47,8 +47,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             return (
               <button
                 aria-label={`Show product image ${index + 1}`}
-                className={`aspect-square overflow-hidden rounded-md border bg-zinc-100 ${
-                  isActive ? "border-red-600 ring-2 ring-red-100" : "border-zinc-200"
+                className={`aspect-square overflow-hidden rounded-md border bg-zinc-900 transition ${
+                  isActive
+                    ? "border-red-400 ring-2 ring-red-500/20"
+                    : "border-white/10 hover:border-white/30"
                 }`}
                 key={image.id}
                 onClick={() => setActiveImageId(image.id)}

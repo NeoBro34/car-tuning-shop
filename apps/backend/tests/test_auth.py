@@ -1,6 +1,19 @@
 from fastapi.testclient import TestClient
 
 
+def test_register_allows_cors_preflight(client: TestClient) -> None:
+    response = client.options(
+        "/api/v1/auth/register",
+        headers={
+            "Origin": "http://localhost:3000",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+
 def test_register_login_and_me(client: TestClient) -> None:
     register_response = client.post(
         "/api/v1/auth/register",

@@ -1,5 +1,6 @@
 "use client";
 
+import { RotateCcw, Search } from "lucide-react";
 import type {
   Brand,
   Category,
@@ -26,34 +27,40 @@ export function ProductFilters({
   }
 
   return (
-    <aside className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+    <aside className="auto-card rounded-lg p-4 lg:sticky lg:top-24">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-base font-bold text-zinc-950">Filters</h2>
+        <h2 className="text-base font-black uppercase tracking-wide text-white">
+          Filters
+        </h2>
         <button
-          className="text-sm font-semibold text-red-600 hover:text-red-700"
+          className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-bold text-red-300 transition hover:bg-red-500/10 hover:text-red-100"
           onClick={onReset}
           type="button"
         >
+          <RotateCcw className="size-4" />
           Reset
         </button>
       </div>
 
       <div className="mt-4 space-y-4">
         <label className="block">
-          <span className="text-sm font-semibold text-zinc-700">Search</span>
+          <span className="text-sm font-bold text-zinc-300">Search</span>
+          <span className="relative mt-2 block">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
           <input
-            className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+            className="auto-input w-full rounded-md py-2 pl-9 pr-3 text-sm"
             onChange={(event) => updateFilter("search", event.target.value)}
             placeholder="Search products"
             type="search"
             value={filters.search}
           />
+          </span>
         </label>
 
         <label className="block">
-          <span className="text-sm font-semibold text-zinc-700">Category</span>
+          <span className="text-sm font-bold text-zinc-300">Category</span>
           <select
-            className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+            className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
             onChange={(event) => updateFilter("categoryId", event.target.value)}
             value={filters.categoryId}
           >
@@ -67,9 +74,9 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="text-sm font-semibold text-zinc-700">Brand</span>
+          <span className="text-sm font-bold text-zinc-300">Brand</span>
           <select
-            className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+            className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
             onChange={(event) => updateFilter("brandId", event.target.value)}
             value={filters.brandId}
           >
@@ -84,9 +91,9 @@ export function ProductFilters({
 
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
-            <span className="text-sm font-semibold text-zinc-700">Min price</span>
+            <span className="text-sm font-bold text-zinc-300">Min price</span>
             <input
-              className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+              className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               min="0"
               onChange={(event) => updateFilter("minPrice", event.target.value)}
               placeholder="0"
@@ -95,9 +102,9 @@ export function ProductFilters({
             />
           </label>
           <label className="block">
-            <span className="text-sm font-semibold text-zinc-700">Max price</span>
+            <span className="text-sm font-bold text-zinc-300">Max price</span>
             <input
-              className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+              className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               min="0"
               onChange={(event) => updateFilter("maxPrice", event.target.value)}
               placeholder="5000"

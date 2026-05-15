@@ -16,7 +16,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm lg:sticky lg:top-24">
+    <aside className="auto-card rounded-lg p-3 lg:sticky lg:top-24">
       <nav className="grid gap-1 sm:grid-cols-4 lg:grid-cols-1">
         {adminLinks.map((item) => {
           const Icon = item.icon;
@@ -25,8 +25,8 @@ export function AdminSidebar() {
           return (
             <Link
               className={cn(
-                "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-zinc-700 transition hover:bg-zinc-100",
-                isActive && "bg-red-50 text-red-700",
+                "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-zinc-300 transition hover:bg-white/10 hover:text-white",
+                isActive && "bg-red-500/15 text-red-200",
               )}
               href={item.href}
               key={item.href}

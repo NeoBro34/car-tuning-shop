@@ -22,11 +22,13 @@ source venv/bin/activate
 pip install -r requirements-dev.txt
 ```
 
-Set local environment variables before running against PostgreSQL:
+Set local environment variables before running against PostgreSQL, or put the
+same values in a local `.env` file:
 
 ```bash
 export DATABASE_URL="postgresql+psycopg2://postgres:postgres@localhost:5432/car_tuning_shop"
 export SECRET_KEY="replace-with-a-long-random-secret"
+export CORS_ALLOW_ORIGINS="http://localhost:3000,http://127.0.0.1:3000"
 ```
 
 ## Database

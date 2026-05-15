@@ -41,19 +41,19 @@ export function CartItemList({ items }: CartItemListProps) {
 
         return (
           <article
-            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+            className="auto-card rounded-lg p-4"
             key={item.id}
           >
             <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start">
               <div>
                 <Link
-                  className="text-lg font-bold text-zinc-950 hover:text-red-700"
+                  className="text-lg font-black text-white hover:text-red-200"
                   href={`/products/${item.product.slug}`}
                 >
                   {item.product.name}
                 </Link>
-                <p className="mt-1 text-sm text-zinc-600">SKU {item.product.sku}</p>
-                <p className="mt-3 text-sm font-semibold text-zinc-700">
+                <p className="mt-1 text-sm text-zinc-500">SKU {item.product.sku}</p>
+                <p className="mt-3 text-sm font-semibold text-zinc-300">
                   {formatCartPrice(activePrice)} each
                 </p>
                 <p className="mt-1 text-sm text-zinc-500">
@@ -62,12 +62,12 @@ export function CartItemList({ items }: CartItemListProps) {
               </div>
 
               <div className="flex flex-col gap-3 sm:items-end">
-                <p className="text-lg font-black text-zinc-950">
+                <p className="text-lg font-black text-white">
                   {formatCartPrice(item.line_subtotal)}
                 </p>
-                <div className="grid h-10 w-32 grid-cols-[2.5rem_1fr_2.5rem] overflow-hidden rounded-md border border-zinc-300">
+                <div className="grid h-10 w-32 grid-cols-[2.5rem_1fr_2.5rem] overflow-hidden rounded-md border border-white/10 bg-black/25">
                   <button
-                    className="border-r border-zinc-300 font-bold disabled:cursor-not-allowed disabled:opacity-40"
+                    className="border-r border-white/10 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={isLoading || item.quantity <= 1}
                     onClick={() => handleQuantityChange(item, item.quantity - 1)}
                     type="button"
@@ -75,7 +75,7 @@ export function CartItemList({ items }: CartItemListProps) {
                     -
                   </button>
                   <input
-                    className="w-full text-center text-sm font-bold outline-none"
+                    className="w-full bg-transparent text-center text-sm font-bold text-white outline-none"
                     disabled={isLoading}
                     max={item.product.stock_quantity}
                     min="1"
@@ -86,7 +86,7 @@ export function CartItemList({ items }: CartItemListProps) {
                     value={item.quantity}
                   />
                   <button
-                    className="border-l border-zinc-300 font-bold disabled:cursor-not-allowed disabled:opacity-40"
+                    className="border-l border-white/10 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={isLoading || isAtStockLimit}
                     onClick={() => handleQuantityChange(item, item.quantity + 1)}
                     type="button"
@@ -95,12 +95,12 @@ export function CartItemList({ items }: CartItemListProps) {
                   </button>
                 </div>
                 {isAtStockLimit ? (
-                  <p className="text-xs font-semibold text-red-600">
+                  <p className="text-xs font-semibold text-red-300">
                     Stock limit reached
                   </p>
                 ) : null}
                 <button
-                  className="text-sm font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
+                  className="text-sm font-semibold text-red-300 hover:text-red-100 disabled:opacity-50"
                   disabled={isLoading}
                   onClick={() => handleRemove(item.id)}
                   type="button"

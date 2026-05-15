@@ -19,14 +19,14 @@ export default async function OrderSuccessPage({
 
   return (
     <section className="mx-auto flex min-h-[calc(100vh-9rem)] w-full max-w-2xl items-center px-4 py-12 sm:px-6">
-      <div className="w-full rounded-lg border border-zinc-200 bg-white p-8 text-center shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-600">
+      <div className="auto-card w-full rounded-lg p-8 text-center">
+        <p className="text-sm font-black uppercase tracking-[0.18em] text-red-300">
           Order created
         </p>
-        <h1 className="mt-3 text-3xl font-bold text-zinc-950">
+        <h1 className="mt-3 text-3xl font-black text-white">
           Thanks for your order
         </h1>
-        <p className="mt-3 text-sm leading-6 text-zinc-600">
+        <p className="mt-3 text-sm leading-6 text-zinc-400">
           {orderId ? `Order #${orderId} was created successfully.` : "Your order was created successfully."}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">

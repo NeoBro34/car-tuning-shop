@@ -22,10 +22,10 @@ export function RelatedProducts({
     <section className="mt-12">
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-600">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-red-300">
             More parts
           </p>
-          <h2 className="mt-2 text-2xl font-bold text-zinc-950">
+          <h2 className="mt-2 text-2xl font-black text-white">
             Related products
           </h2>
         </div>
@@ -34,7 +34,7 @@ export function RelatedProducts({
       {products.length > 0 ? (
         <ProductGrid brands={brands} categories={categories} products={products} />
       ) : (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 text-sm text-zinc-600 shadow-sm">
+        <div className="auto-card rounded-lg p-6 text-sm text-zinc-400">
           No related products found.
         </div>
       )}

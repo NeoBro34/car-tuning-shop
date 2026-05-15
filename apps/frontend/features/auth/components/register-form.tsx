@@ -61,61 +61,61 @@ export function RegisterForm() {
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Full name</span>
+        <span className="text-sm font-bold text-zinc-300">Full name</span>
         <input
-          className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+          className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="text"
           {...register("full_name")}
         />
         {errors.full_name ? (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-red-300">
             {errors.full_name.message}
           </p>
         ) : null}
       </label>
 
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Email</span>
+        <span className="text-sm font-bold text-zinc-300">Email</span>
         <input
-          className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+          className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="email"
           {...register("email")}
         />
         {errors.email ? (
-          <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          <p className="mt-1 text-sm text-red-300">{errors.email.message}</p>
         ) : null}
       </label>
 
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">Password</span>
+        <span className="text-sm font-bold text-zinc-300">Password</span>
         <input
-          className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+          className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="password"
           {...register("password")}
         />
         {errors.password ? (
-          <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          <p className="mt-1 text-sm text-red-300">{errors.password.message}</p>
         ) : null}
       </label>
 
       <label className="block">
-        <span className="text-sm font-semibold text-zinc-700">
+        <span className="text-sm font-bold text-zinc-300">
           Confirm password
         </span>
         <input
-          className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+          className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="password"
           {...register("confirmPassword")}
         />
         {errors.confirmPassword ? (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-red-300">
             {errors.confirmPassword.message}
           </p>
         ) : null}
       </label>
 
       {error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-red-400/30 bg-red-950/40 px-3 py-2 text-sm text-red-200">
           {error}
         </div>
       ) : null}
@@ -124,9 +124,24 @@ export function RegisterForm() {
         {isLoading ? "Creating account..." : "Register"}
       </button>
 
-      <p className="text-center text-sm text-zinc-600">
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-zinc-300"
+          type="button"
+        >
+          Google
+        </button>
+        <button
+          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-zinc-300"
+          type="button"
+        >
+          Apple
+        </button>
+      </div>
+
+      <p className="text-center text-sm text-zinc-400">
         Already have an account?{" "}
-        <Link className="font-semibold text-red-600" href="/login">
+        <Link className="font-semibold text-red-300" href="/login">
           Login
         </Link>
       </p>
