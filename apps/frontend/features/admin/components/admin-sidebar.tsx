@@ -1,18 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { BarChart3, Boxes, ShoppingBag, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const adminLinks = [
-  { href: "/admin", icon: BarChart3, label: "Dashboard" },
-  { href: "/admin/products", icon: Boxes, label: "Products" },
-  { href: "/admin/orders", icon: ShoppingBag, label: "Orders" },
-  { href: "/admin/users", icon: Users, label: "Users" },
+  { href: "/admin", icon: BarChart3, labelKey: "dashboard" },
+  { href: "/admin/products", icon: Boxes, labelKey: "products" },
+  { href: "/admin/orders", icon: ShoppingBag, labelKey: "orders" },
+  { href: "/admin/users", icon: Users, labelKey: "users" },
 ];
 
 export function AdminSidebar() {
+  const t = useTranslations("Admin");
   const pathname = usePathname();
 
   return (
@@ -32,7 +34,7 @@ export function AdminSidebar() {
               key={item.href}
             >
               <Icon className="h-4 w-4" />
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           );
         })}

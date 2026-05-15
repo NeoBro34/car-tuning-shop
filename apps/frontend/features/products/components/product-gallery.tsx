@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ProductImage } from "@/features/products/product.types";
 
 type ProductGalleryProps = {
@@ -9,6 +10,8 @@ type ProductGalleryProps = {
 };
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
+  const productDetail = useTranslations("ProductDetail");
+  const products = useTranslations("Products");
   const sortedImages = [...images].sort((left, right) => {
     if (left.is_main === right.is_main) {
       return left.id - right.id;
@@ -34,7 +37,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           />
         ) : (
           <span className="px-4 text-center text-sm font-semibold text-zinc-500">
-            Product image
+            {products("productImage")}
           </span>
         )}
       </div>
@@ -46,7 +49,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
             return (
               <button
-                aria-label={`Show product image ${index + 1}`}
+                aria-label={productDetail("thumbnail", { index: index + 1 })}
                 className={`aspect-square overflow-hidden rounded-md border bg-zinc-900 transition ${
                   isActive
                     ? "border-red-400 ring-2 ring-red-500/20"

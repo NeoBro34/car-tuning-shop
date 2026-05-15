@@ -1,15 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { loginSchema, type LoginFormValues } from "@/features/auth/auth.schema";
+import { routing } from "@/i18n/routing";
 import { useAuthStore } from "@/store/auth-store";
 
+function normalizeRedirectPath(path: string) {
+  const localePattern = new RegExp(`^/(${routing.locales.join("|")})(?=/|$)`);
+
+  return path.replace(localePattern, "") || "/";
+}
+
 export function LoginForm() {
+  const auth = useTranslations("Auth");
+  const common = useTranslations("Common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const {
@@ -31,7 +42,7 @@ export function LoginForm() {
     },
     resolver: zodResolver(loginSchema),
   });
-  const redirectTo = searchParams.get("redirect") ?? "/products";
+  const redirectTo = normalizeRedirectPath(searchParams.get("redirect") ?? "/products");
 
   useEffect(() => {
     if (isHydrated && isAuthenticated) {
@@ -44,17 +55,17 @@ export function LoginForm() {
 
     try {
       await login(values);
-      toast.success("Logged in successfully");
+      toast.success(auth("loginSuccess"));
       router.replace(redirectTo);
     } catch {
-      toast.error("Login failed");
+      toast.error(auth("loginFailed"));
     }
   }
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
-        <span className="text-sm font-bold text-zinc-300">Email</span>
+        <span className="text-sm font-bold text-zinc-300">{common("email")}</span>
         <input
           className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="email"
@@ -66,7 +77,7 @@ export function LoginForm() {
       </label>
 
       <label className="block">
-        <span className="text-sm font-bold text-zinc-300">Password</span>
+        <span className="text-sm font-bold text-zinc-300">{common("password")}</span>
         <input
           className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="password"
@@ -84,7 +95,7 @@ export function LoginForm() {
       ) : null}
 
       <button className="btn-primary w-full" disabled={isLoading} type="submit">
-        {isLoading ? "Logging in..." : "Login"}
+        {isLoading ? auth("loggingIn") : common("login")}
       </button>
 
       <div className="grid grid-cols-2 gap-3">
@@ -92,20 +103,20 @@ export function LoginForm() {
           className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-zinc-300"
           type="button"
         >
-          Google
+          {common("google")}
         </button>
         <button
           className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-zinc-300"
           type="button"
         >
-          Apple
+          {common("apple")}
         </button>
       </div>
 
       <p className="text-center text-sm text-zinc-400">
-        No account?{" "}
+        {auth("noAccount")}{" "}
         <Link className="font-semibold text-red-300" href="/register">
-          Register
+          {common("register")}
         </Link>
       </p>
     </form>

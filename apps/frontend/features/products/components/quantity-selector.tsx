@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 type QuantitySelectorProps = {
   max: number;
   value: number;
@@ -11,6 +13,7 @@ export function QuantitySelector({
   value,
   onChange,
 }: QuantitySelectorProps) {
+  const t = useTranslations("ProductDetail");
   const isDisabled = max <= 0;
   const safeValue = isDisabled ? 0 : value;
 
@@ -26,7 +29,7 @@ export function QuantitySelector({
   return (
     <div>
       <label className="text-sm font-bold text-zinc-300" htmlFor="quantity">
-        Quantity
+        {t("quantity")}
       </label>
       <div className="mt-2 grid h-11 w-36 grid-cols-[2.75rem_1fr_2.75rem] overflow-hidden rounded-md border border-white/10 bg-black/25">
         <button

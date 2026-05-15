@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { formatCartPrice } from "@/features/cart/cart-format";
 import { useCartStore } from "@/store/cart-store";
@@ -11,6 +12,8 @@ type CartItemListProps = {
 };
 
 export function CartItemList({ items }: CartItemListProps) {
+  const common = useTranslations("Common");
+  const t = useTranslations("Cart");
   const { isLoading, removeItem, updateQuantity } = useCartStore();
 
   async function handleQuantityChange(item: CartItem, quantity: number) {
@@ -18,18 +21,18 @@ export function CartItemList({ items }: CartItemListProps) {
 
     try {
       await updateQuantity(item.id, nextQuantity);
-      toast.success("Cart updated");
+      toast.success(t("updated"));
     } catch {
-      toast.error("Could not update cart item");
+      toast.error(t("updateError"));
     }
   }
 
   async function handleRemove(itemId: number) {
     try {
       await removeItem(itemId);
-      toast.success("Item removed");
+      toast.success(t("removed"));
     } catch {
-      toast.error("Could not remove item");
+      toast.error(t("removeError"));
     }
   }
 
@@ -52,12 +55,14 @@ export function CartItemList({ items }: CartItemListProps) {
                 >
                   {item.product.name}
                 </Link>
-                <p className="mt-1 text-sm text-zinc-500">SKU {item.product.sku}</p>
+                <p className="mt-1 text-sm text-zinc-500">
+                  {common("sku")} {item.product.sku}
+                </p>
                 <p className="mt-3 text-sm font-semibold text-zinc-300">
-                  {formatCartPrice(activePrice)} each
+                  {t("each", { price: formatCartPrice(activePrice) })}
                 </p>
                 <p className="mt-1 text-sm text-zinc-500">
-                  Stock: {item.product.stock_quantity}
+                  {t("stock", { count: item.product.stock_quantity })}
                 </p>
               </div>
 
@@ -96,7 +101,7 @@ export function CartItemList({ items }: CartItemListProps) {
                 </div>
                 {isAtStockLimit ? (
                   <p className="text-xs font-semibold text-red-300">
-                    Stock limit reached
+                    {t("stockLimit")}
                   </p>
                 ) : null}
                 <button
@@ -105,7 +110,7 @@ export function CartItemList({ items }: CartItemListProps) {
                   onClick={() => handleRemove(item.id)}
                   type="button"
                 >
-                  Remove
+                  {common("remove")}
                 </button>
               </div>
             </div>

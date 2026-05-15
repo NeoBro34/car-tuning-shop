@@ -1,8 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -13,6 +14,8 @@ import {
 import { useAuthStore } from "@/store/auth-store";
 
 export function RegisterForm() {
+  const auth = useTranslations("Auth");
+  const common = useTranslations("Common");
   const router = useRouter();
   const {
     clearError,
@@ -51,17 +54,17 @@ export function RegisterForm() {
         full_name: values.full_name?.trim() || null,
         password: values.password,
       });
-      toast.success("Account created");
+      toast.success(auth("registerSuccess"));
       router.replace("/products");
     } catch {
-      toast.error("Registration failed");
+      toast.error(auth("registerFailed"));
     }
   }
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
-        <span className="text-sm font-bold text-zinc-300">Full name</span>
+        <span className="text-sm font-bold text-zinc-300">{auth("fullName")}</span>
         <input
           className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="text"
@@ -75,7 +78,7 @@ export function RegisterForm() {
       </label>
 
       <label className="block">
-        <span className="text-sm font-bold text-zinc-300">Email</span>
+        <span className="text-sm font-bold text-zinc-300">{common("email")}</span>
         <input
           className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="email"
@@ -87,7 +90,7 @@ export function RegisterForm() {
       </label>
 
       <label className="block">
-        <span className="text-sm font-bold text-zinc-300">Password</span>
+        <span className="text-sm font-bold text-zinc-300">{common("password")}</span>
         <input
           className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
           type="password"
@@ -100,7 +103,7 @@ export function RegisterForm() {
 
       <label className="block">
         <span className="text-sm font-bold text-zinc-300">
-          Confirm password
+          {auth("confirmPassword")}
         </span>
         <input
           className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
@@ -121,7 +124,7 @@ export function RegisterForm() {
       ) : null}
 
       <button className="btn-primary w-full" disabled={isLoading} type="submit">
-        {isLoading ? "Creating account..." : "Register"}
+        {isLoading ? auth("creatingAccount") : common("register")}
       </button>
 
       <div className="grid grid-cols-2 gap-3">
@@ -129,20 +132,20 @@ export function RegisterForm() {
           className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-zinc-300"
           type="button"
         >
-          Google
+          {common("google")}
         </button>
         <button
           className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-zinc-300"
           type="button"
         >
-          Apple
+          {common("apple")}
         </button>
       </div>
 
       <p className="text-center text-sm text-zinc-400">
-        Already have an account?{" "}
+        {auth("hasAccount")}{" "}
         <Link className="font-semibold text-red-300" href="/login">
-          Login
+          {common("login")}
         </Link>
       </p>
     </form>

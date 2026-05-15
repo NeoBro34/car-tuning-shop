@@ -1,18 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { Gauge, Menu, ShoppingBag, User, X } from "lucide-react";
-import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Suspense, useState } from "react";
 import toast from "react-hot-toast";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { useCartCount } from "@/hooks/use-cart-count";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/products", label: "Products" },
-  { href: "/cart", label: "Cart" },
+  { href: "/", labelKey: "home" },
+  { href: "/products", labelKey: "products" },
+  { href: "/cart", labelKey: "cart" },
 ];
 
 function normalizeRole(role?: string) {
@@ -28,6 +30,8 @@ function isActivePath(pathname: string, href: string) {
 }
 
 export function Navbar() {
+  const common = useTranslations("Common");
+  const t = useTranslations("Navbar");
   const pathname = usePathname();
   const router = useRouter();
   const cartCount = useCartCount();
@@ -43,7 +47,7 @@ export function Navbar() {
   function handleLogout() {
     logout();
     closeMenu();
-    toast.success("Logged out");
+    toast.success(t("loggedOut"));
     router.push("/login");
   }
 
@@ -61,10 +65,10 @@ export function Navbar() {
           </span>
           <span className="leading-none">
             <span className="block text-sm font-black uppercase tracking-wide text-white sm:text-base">
-              Car Tuning
+              {t("brand")}
             </span>
             <span className="block text-xs font-semibold text-zinc-500">
-              Performance parts
+              {t("tagline")}
             </span>
           </span>
         </Link>
@@ -83,7 +87,7 @@ export function Navbar() {
                 href={item.href}
                 key={item.href}
               >
-                {item.label}
+                  {common(item.labelKey)}
                 {item.href === "/cart" && cartCount > 0 ? (
                   <span className="ml-2 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-black leading-none text-white">
                     {cartCount}
@@ -101,7 +105,7 @@ export function Navbar() {
               )}
               href="/admin"
             >
-              Admin
+              {common("admin")}
             </Link>
           ) : null}
         </div>
@@ -118,7 +122,7 @@ export function Navbar() {
                 onClick={handleLogout}
                 type="button"
               >
-                Logout
+                {common("logout")}
               </button>
             </>
           ) : (
@@ -127,21 +131,24 @@ export function Navbar() {
                 className="rounded-md px-4 py-2 text-sm font-bold text-zinc-300 transition hover:bg-white/10 hover:text-white"
                 href="/login"
               >
-                Login
+                {common("login")}
               </Link>
               <Link
                 className="rounded-md bg-gradient-to-r from-red-500 to-orange-500 px-4 py-2 text-sm font-bold text-white shadow-sm shadow-red-950/30 transition hover:brightness-110"
                 href="/register"
               >
-                Register
+                {common("register")}
               </Link>
             </>
           )}
+          <Suspense fallback={null}>
+            <LanguageSwitcher />
+          </Suspense>
         </div>
 
         <button
           aria-expanded={isOpen}
-          aria-label="Toggle navigation menu"
+          aria-label={t("toggleMenu")}
           className="grid size-10 place-items-center rounded-md border border-white/10 bg-white/[0.06] text-white shadow-sm md:hidden"
           onClick={() => setIsOpen((value) => !value)}
           type="button"
@@ -170,7 +177,7 @@ export function Navbar() {
                   key={item.href}
                   onClick={closeMenu}
                 >
-                  <span>{item.label}</span>
+                  <span>{common(item.labelKey)}</span>
                   {item.href === "/cart" && cartCount > 0 ? (
                     <span className="rounded-full bg-red-600 px-2 py-1 text-xs font-black leading-none text-white">
                       {cartCount}
@@ -190,7 +197,7 @@ export function Navbar() {
                 href="/admin"
                 onClick={closeMenu}
               >
-                Admin
+                {common("admin")}
               </Link>
             ) : null}
 
@@ -206,7 +213,7 @@ export function Navbar() {
                     onClick={handleLogout}
                     type="button"
                   >
-                    Logout
+                    {common("logout")}
                   </button>
                 </>
               ) : (
@@ -216,24 +223,29 @@ export function Navbar() {
                     href="/login"
                     onClick={closeMenu}
                   >
-                    Login
+                    {common("login")}
                   </Link>
                   <Link
                     className="flex min-h-11 items-center justify-center rounded-md bg-gradient-to-r from-red-500 to-orange-500 text-sm font-bold text-white"
                     href="/register"
                     onClick={closeMenu}
                   >
-                    Register
+                    {common("register")}
                   </Link>
                 </div>
               )}
+              <div className="pt-1">
+                <Suspense fallback={null}>
+                  <LanguageSwitcher />
+                </Suspense>
+              </div>
             </div>
           </div>
         </div>
       ) : null}
 
       <Link
-        aria-label="Open cart"
+        aria-label={t("openCart")}
         className="fixed bottom-5 right-5 z-40 grid size-12 place-items-center rounded-md bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-xl shadow-red-950/30 transition hover:brightness-110 md:hidden"
         href="/cart"
         onClick={closeMenu}

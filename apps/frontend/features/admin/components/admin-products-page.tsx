@@ -1,6 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,8 @@ import { formatPrice } from "@/features/products/product-format";
 const PAGE_SIZE = 20;
 
 export function AdminProductsPage() {
+  const admin = useTranslations("Admin");
+  const common = useTranslations("Common");
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -47,7 +50,7 @@ export function AdminProductsPage() {
       setCategories(categoryResponse.items);
       setBrands(brandResponse.items);
     } catch {
-      setError("Products could not be loaded.");
+      setError(admin("productsError"));
     } finally {
       setIsLoading(false);
     }
@@ -73,14 +76,14 @@ export function AdminProductsPage() {
           current.map((product) => (product.id === updated.id ? updated : product)),
         );
         setEditingProduct(null);
-        toast.success("Product updated");
+        toast.success(admin("updated"));
       } else {
         const created = await createAdminProduct(payload);
         setProducts((current) => [created, ...current]);
-        toast.success("Product created");
+        toast.success(admin("saved"));
       }
     } catch {
-      toast.error("Could not save product");
+      toast.error(admin("saveError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -101,10 +104,10 @@ export function AdminProductsPage() {
       setProducts((current) =>
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
-      toast.success("Stock updated");
+      toast.success(admin("stockUpdated"));
     } catch {
       setProducts(previous);
-      toast.error("Could not update stock");
+      toast.error(admin("stockError"));
     }
   }
 
@@ -119,10 +122,10 @@ export function AdminProductsPage() {
 
     try {
       await setAdminProductActive(product.id, { is_active: nextActive });
-      toast.success("Product status updated");
+      toast.success(admin("statusUpdated"));
     } catch {
       setProducts(previous);
-      toast.error("Could not update product status");
+      toast.error(admin("statusError"));
     }
   }
 
@@ -132,10 +135,10 @@ export function AdminProductsPage() {
 
     try {
       await deleteAdminProduct(productId);
-      toast.success("Product deleted");
+      toast.success(admin("deleted"));
     } catch {
       setProducts(previous);
-      toast.error("Could not delete product");
+      toast.error(admin("deleteError"));
     }
   }
 
@@ -149,22 +152,22 @@ export function AdminProductsPage() {
       setProducts((current) =>
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
-      toast.success("Images uploaded");
+      toast.success(admin("imagesUploaded"));
     } catch {
-      toast.error("Could not upload images");
+      toast.error(admin("imagesError"));
     }
   }
 
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
-      { accessorKey: "name", header: "Product" },
-      { accessorKey: "sku", header: "SKU" },
+      { accessorKey: "name", header: common("product") },
+      { accessorKey: "sku", header: common("sku") },
       {
-        header: "Price",
+        header: common("price"),
         cell: ({ row }) => formatPrice(row.original.discount_price ?? row.original.price),
       },
       {
-        header: "Stock",
+        header: common("stock"),
         cell: ({ row }) => (
           <Input
             min="0"
@@ -175,19 +178,19 @@ export function AdminProductsPage() {
         ),
       },
       {
-        header: "Status",
+        header: admin("status"),
         cell: ({ row }) => (
           <Button
             onClick={() => toggleActive(row.original)}
             type="button"
             variant={row.original.is_active ? "secondary" : "danger"}
           >
-            {row.original.is_active ? "Active" : "Inactive"}
+            {row.original.is_active ? admin("active") : admin("inactive")}
           </Button>
         ),
       },
       {
-        header: "Images",
+        header: admin("images"),
         cell: ({ row }) => (
           <Input
             accept="image/*"
@@ -198,7 +201,7 @@ export function AdminProductsPage() {
         ),
       },
       {
-        header: "Actions",
+        header: common("actions"),
         cell: ({ row }) => (
           <div className="flex gap-2">
             <Button
@@ -206,14 +209,14 @@ export function AdminProductsPage() {
               type="button"
               variant="secondary"
             >
-              Edit
+              {common("edit")}
             </Button>
             <Button
               onClick={() => removeProduct(row.original.id)}
               type="button"
               variant="danger"
             >
-              Delete
+              {common("delete")}
             </Button>
           </div>
         ),
@@ -227,7 +230,7 @@ export function AdminProductsPage() {
       <Card>
         <CardHeader>
           <h2 className="text-lg font-black text-white">
-            {editingProduct ? "Update product" : "Create product"}
+            {editingProduct ? admin("updateProduct") : admin("createProduct")}
           </h2>
         </CardHeader>
         <CardContent>
@@ -251,11 +254,11 @@ export function AdminProductsPage() {
             }
             isSubmitting={isSubmitting}
             onSubmit={submitProduct}
-            submitLabel={editingProduct ? "Update product" : "Create product"}
+            submitLabel={editingProduct ? admin("updateProduct") : admin("createProduct")}
           />
           {editingProduct ? (
             <Button className="mt-3" onClick={() => setEditingProduct(null)} type="button" variant="ghost">
-              Cancel editing
+              {admin("cancelEditing")}
             </Button>
           ) : null}
         </CardContent>
@@ -263,7 +266,7 @@ export function AdminProductsPage() {
 
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-black text-white">Products</h2>
+          <h2 className="text-lg font-black text-white">{admin("products")}</h2>
         </CardHeader>
         <CardContent>
           {isLoading ? <div className="h-64 animate-pulse rounded-md bg-white/10" /> : null}
@@ -273,7 +276,7 @@ export function AdminProductsPage() {
             </div>
           ) : null}
           {!isLoading && !error ? (
-            <AdminDataTable columns={columns} data={products} emptyLabel="No products found." />
+            <AdminDataTable columns={columns} data={products} emptyLabel={admin("noProducts")} />
           ) : null}
         </CardContent>
       </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, SlidersHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { ProductFilters } from "@/features/products/components/product-filters";
 import { ProductGrid } from "@/features/products/components/product-grid";
@@ -53,6 +54,7 @@ function buildProductParams(
 }
 
 export function ProductsPage() {
+  const t = useTranslations("Products");
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,7 +123,7 @@ export function ProductsPage() {
         setBrands(brandsResponse.items);
       } catch {
         if (!controller.signal.aborted) {
-          setError("Products could not be loaded. Check the backend API.");
+          setError(t("loadingError"));
           setProducts([]);
           setMeta(initialMeta);
         }
@@ -135,7 +137,7 @@ export function ProductsPage() {
     loadProducts();
 
     return () => controller.abort();
-  }, [params]);
+  }, [params, t]);
 
   function handleFilterChange(nextFilters: ProductFiltersState) {
     setFilters(nextFilters);
@@ -152,19 +154,18 @@ export function ProductsPage() {
       <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div className="max-w-3xl">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-red-300">
-            Catalog
+            {t("eyebrow")}
           </p>
           <h1 className="mt-3 text-4xl font-black uppercase tracking-normal text-white sm:text-5xl">
-            Performance parts
+            {t("headline")}
           </h1>
           <p className="mt-4 text-lg leading-8 text-zinc-400">
-            Search, filter, and compare tuning parts with live API-backed
-            product data.
+            {t("description")}
           </p>
         </div>
         <div className="auto-card flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold text-zinc-300">
           <Search className="size-4 text-red-300" />
-          {meta.total} products matched
+          {t("matched", { count: meta.total })}
         </div>
       </div>
 
@@ -185,24 +186,24 @@ export function ProductsPage() {
               </span>
               <div>
                 <p className="text-sm font-black text-white">
-                  {meta.total} products found
+                  {t("found", { count: meta.total })}
                 </p>
                 <p className="text-xs font-semibold text-zinc-500">
-                  Showing {products.length} items on this page
+                  {t("showing", { count: products.length })}
                 </p>
               </div>
             </div>
             <label className="flex items-center gap-3 text-sm font-bold text-zinc-400">
-              Sort
+              {t("sort")}
               <select
                 className="auto-input h-10 rounded-md px-3 text-sm font-bold"
                 onChange={(event) => setSortBy(event.target.value as SortOption)}
                 value={sortBy}
               >
-                <option value="featured">Featured</option>
-                <option value="price-asc">Price: low to high</option>
-                <option value="price-desc">Price: high to low</option>
-                <option value="stock-desc">Stock: highest</option>
+                <option value="featured">{t("sortFeatured")}</option>
+                <option value="price-asc">{t("sortPriceAsc")}</option>
+                <option value="price-desc">{t("sortPriceDesc")}</option>
+                <option value="stock-desc">{t("sortStockDesc")}</option>
               </select>
             </label>
           </div>
@@ -220,7 +221,7 @@ export function ProductsPage() {
 
           {!isLoading && error ? (
             <div className="rounded-lg border border-red-400/30 bg-red-950/40 p-6">
-              <h2 className="font-bold text-red-100">Unable to load products</h2>
+              <h2 className="font-bold text-red-100">{t("loadingErrorTitle")}</h2>
               <p className="mt-2 text-sm leading-6 text-red-200">{error}</p>
             </div>
           ) : null}
@@ -228,10 +229,10 @@ export function ProductsPage() {
           {!isLoading && !error && products.length === 0 ? (
             <div className="auto-card rounded-lg p-8 text-center">
               <h2 className="text-xl font-bold text-white">
-                No products found
+                {t("emptyTitle")}
               </h2>
               <p className="mt-2 text-sm leading-6 text-zinc-400">
-                Adjust search or filters to see more tuning parts.
+                {t("emptyDescription")}
               </p>
             </div>
           ) : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 import { QuantitySelector } from "@/features/products/components/quantity-selector";
 import {
   formatPrice,
@@ -28,6 +29,8 @@ export function ProductInfo({
   quantity,
   onQuantityChange,
 }: ProductInfoProps) {
+  const common = useTranslations("Common");
+  const t = useTranslations("ProductDetail");
   const addItem = useCartStore((state) => state.addItem);
   const discountPercentage = getDiscountPercentage(
     product.price,
@@ -43,9 +46,9 @@ export function ProductInfo({
 
     try {
       await addItem(product, quantity);
-      toast.success("Product added to cart");
+      toast.success(t("added"));
     } catch {
-      toast.error("Could not add product to cart");
+      toast.error(t("addError"));
     }
   }
 
@@ -53,10 +56,10 @@ export function ProductInfo({
     <section className="auto-card rounded-lg p-5 sm:p-6 lg:sticky lg:top-24">
       <div className="flex flex-wrap gap-2 text-xs font-bold text-zinc-400">
         <span className="rounded bg-white/[0.06] px-2 py-1">
-          {category?.name ?? `Category #${product.category_id}`}
+          {category?.name ?? `${common("category")} #${product.category_id}`}
         </span>
         <span className="rounded bg-white/[0.06] px-2 py-1">
-          {brand?.name ?? `Brand #${product.brand_id}`}
+          {brand?.name ?? `${common("brand")} #${product.brand_id}`}
         </span>
         <span className="rounded bg-white/[0.06] px-2 py-1">SKU {product.sku}</span>
       </div>
@@ -76,7 +79,7 @@ export function ProductInfo({
             </p>
             {discountPercentage ? (
               <p className="mb-1 rounded bg-red-500 px-2 py-1 text-sm font-black text-white">
-                {discountPercentage}% off
+                {t("discount", { percent: discountPercentage })}
               </p>
             ) : null}
           </>
@@ -88,7 +91,9 @@ export function ProductInfo({
           isOutOfStock ? "text-red-300" : "text-emerald-300"
         }`}
       >
-        {isOutOfStock ? "Out of stock" : `${product.stock_quantity} in stock`}
+        {isOutOfStock
+          ? common("outOfStock")
+          : t("stockCount", { count: product.stock_quantity })}
       </p>
 
       <p className="mt-5 whitespace-pre-line text-sm leading-7 text-zinc-400">
@@ -107,7 +112,7 @@ export function ProductInfo({
           onClick={handleAddToCart}
           type="button"
         >
-          {isOutOfStock ? "Out of stock" : "Add to cart"}
+          {isOutOfStock ? common("outOfStock") : common("addToCart")}
         </button>
       </div>
     </section>

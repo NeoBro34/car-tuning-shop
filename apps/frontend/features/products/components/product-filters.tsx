@@ -1,6 +1,7 @@
 "use client";
 
 import { RotateCcw, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type {
   Brand,
   Category,
@@ -22,6 +23,9 @@ export function ProductFilters({
   onChange,
   onReset,
 }: ProductFiltersProps) {
+  const common = useTranslations("Common");
+  const t = useTranslations("Products");
+
   function updateFilter(name: keyof ProductFiltersState, value: string) {
     onChange({ ...filters, [name]: value });
   }
@@ -30,7 +34,7 @@ export function ProductFilters({
     <aside className="auto-card rounded-lg p-4 lg:sticky lg:top-24">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-base font-black uppercase tracking-wide text-white">
-          Filters
+          {t("filters")}
         </h2>
         <button
           className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-bold text-red-300 transition hover:bg-red-500/10 hover:text-red-100"
@@ -38,19 +42,19 @@ export function ProductFilters({
           type="button"
         >
           <RotateCcw className="size-4" />
-          Reset
+          {t("reset")}
         </button>
       </div>
 
       <div className="mt-4 space-y-4">
         <label className="block">
-          <span className="text-sm font-bold text-zinc-300">Search</span>
+          <span className="text-sm font-bold text-zinc-300">{common("search")}</span>
           <span className="relative mt-2 block">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
           <input
             className="auto-input w-full rounded-md py-2 pl-9 pr-3 text-sm"
             onChange={(event) => updateFilter("search", event.target.value)}
-            placeholder="Search products"
+            placeholder={t("searchPlaceholder")}
             type="search"
             value={filters.search}
           />
@@ -58,13 +62,13 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="text-sm font-bold text-zinc-300">Category</span>
+          <span className="text-sm font-bold text-zinc-300">{common("category")}</span>
           <select
             className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
             onChange={(event) => updateFilter("categoryId", event.target.value)}
             value={filters.categoryId}
           >
-            <option value="">All categories</option>
+            <option value="">{common("allCategories")}</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -74,13 +78,13 @@ export function ProductFilters({
         </label>
 
         <label className="block">
-          <span className="text-sm font-bold text-zinc-300">Brand</span>
+          <span className="text-sm font-bold text-zinc-300">{common("brand")}</span>
           <select
             className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
             onChange={(event) => updateFilter("brandId", event.target.value)}
             value={filters.brandId}
           >
-            <option value="">All brands</option>
+            <option value="">{common("allBrands")}</option>
             {brands.map((brand) => (
               <option key={brand.id} value={brand.id}>
                 {brand.name}
@@ -91,7 +95,7 @@ export function ProductFilters({
 
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
-            <span className="text-sm font-bold text-zinc-300">Min price</span>
+            <span className="text-sm font-bold text-zinc-300">{t("minPrice")}</span>
             <input
               className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               min="0"
@@ -102,7 +106,7 @@ export function ProductFilters({
             />
           </label>
           <label className="block">
-            <span className="text-sm font-bold text-zinc-300">Max price</span>
+            <span className="text-sm font-bold text-zinc-300">{t("maxPrice")}</span>
             <input
               className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
               min="0"

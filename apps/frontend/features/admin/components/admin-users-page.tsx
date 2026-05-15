@@ -1,6 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ import {
 import type { User } from "@/features/auth";
 
 export function AdminUsersPage() {
+  const admin = useTranslations("Admin");
+  const common = useTranslations("Common");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
@@ -27,7 +30,7 @@ export function AdminUsersPage() {
 
       setUsers(response.items);
     } catch {
-      setError("Users could not be loaded.");
+      setError(admin("usersError"));
     } finally {
       setIsLoading(false);
     }
@@ -53,32 +56,32 @@ export function AdminUsersPage() {
       setUsers((current) =>
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
-      toast.success(user.is_active ? "User blocked" : "User unblocked");
+      toast.success(user.is_active ? admin("userBlocked") : admin("userUnblocked"));
     } catch {
       setUsers(previous);
-      toast.error("Could not update user status");
+      toast.error(admin("userStatusError"));
     }
   }
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
       { accessorKey: "id", header: "ID" },
-      { accessorKey: "email", header: "Email" },
-      { accessorKey: "full_name", header: "Name" },
-      { accessorKey: "role", header: "Role" },
+      { accessorKey: "email", header: common("email") },
+      { accessorKey: "full_name", header: common("name") },
+      { accessorKey: "role", header: admin("role") },
       {
-        header: "Status",
-        cell: ({ row }) => (row.original.is_active ? "Active" : "Blocked"),
+        header: admin("status"),
+        cell: ({ row }) => (row.original.is_active ? admin("active") : admin("blocked")),
       },
       {
-        header: "Actions",
+        header: common("actions"),
         cell: ({ row }) => (
           <Button
             onClick={() => toggleUser(row.original)}
             type="button"
             variant={row.original.is_active ? "danger" : "secondary"}
           >
-            {row.original.is_active ? "Block" : "Unblock"}
+            {row.original.is_active ? admin("block") : admin("unblock")}
           </Button>
         ),
       },
@@ -89,7 +92,7 @@ export function AdminUsersPage() {
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-lg font-black text-white">Users</h2>
+        <h2 className="text-lg font-black text-white">{admin("users")}</h2>
       </CardHeader>
       <CardContent>
         {isLoading ? <div className="h-64 animate-pulse rounded-md bg-white/10" /> : null}
@@ -99,7 +102,7 @@ export function AdminUsersPage() {
           </div>
         ) : null}
         {!isLoading && !error ? (
-          <AdminDataTable columns={columns} data={users} emptyLabel="No users found." />
+          <AdminDataTable columns={columns} data={users} emptyLabel={admin("noUsers")} />
         ) : null}
       </CardContent>
     </Card>

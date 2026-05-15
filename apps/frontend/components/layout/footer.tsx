@@ -1,37 +1,41 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const footerLinks = [
   {
-    title: "What",
+    titleKey: "what",
     links: [
-      { href: "/products", label: "Performance parts" },
-      { href: "/products", label: "Accessories" },
-      { href: "/products", label: "Car model fitment" },
-      { href: "/cart", label: "Cart" },
+      { href: "/products", labelKey: "performanceParts" },
+      { href: "/products", labelKey: "accessories" },
+      { href: "/products", labelKey: "fitment" },
+      { href: "/cart", labelKey: "cart", namespace: "Common" },
     ],
   },
   {
-    title: "Shop",
+    titleKey: "shop",
     links: [
-      { href: "/", label: "Home" },
-      { href: "/products", label: "Products" },
-      { href: "/checkout", label: "Checkout" },
-      { href: "/login", label: "Account" },
+      { href: "/", labelKey: "home", namespace: "Common" },
+      { href: "/products", labelKey: "products", namespace: "Common" },
+      { href: "/checkout", labelKey: "checkout", namespace: "Common" },
+      { href: "/login", labelKey: "account", namespace: "Common" },
     ],
   },
   {
-    title: "Connect",
+    titleKey: "connect",
     links: [
-      { href: "mailto:sales@cartuning.shop", label: "Email" },
-      { href: "tel:+15550120448", label: "Phone" },
-      { href: "/admin", label: "Admin" },
-      { href: "/register", label: "Register" },
+      { href: "mailto:sales@cartuning.shop", labelKey: "email" },
+      { href: "tel:+15550120448", labelKey: "phone" },
+      { href: "/admin", labelKey: "admin", namespace: "Common" },
+      { href: "/register", labelKey: "register", namespace: "Common" },
     ],
   },
 ];
 
 export function Footer() {
+  const common = useTranslations("Common");
+  const t = useTranslations("Footer");
+
   return (
     <footer className="relative overflow-hidden bg-zinc-950 text-white">
       <div className="absolute inset-0 bg-[linear-gradient(135deg,#09090b_0%,#18181b_42%,#7f1d1d_100%)]" />
@@ -41,31 +45,30 @@ export function Footer() {
         <div className="grid gap-10 border-b border-white/15 pb-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-red-200">
-              Car Tuning Shop
+              {t("eyebrow")}
             </p>
             <h2 className="mt-4 max-w-3xl text-4xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Ready to tune it up?
+              {t("headline")}
             </h2>
           </div>
 
           <div className="max-w-xl lg:justify-self-end">
             <p className="text-base leading-7 text-zinc-200">
-              Browse performance parts, styling upgrades, and accessories built
-              for faster ordering and cleaner fitment decisions.
+              {t("description")}
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-black text-zinc-950 transition hover:bg-red-100"
                 href="/products"
               >
-                Browse products
+                {common("browseProducts")}
                 <ArrowUpRight aria-hidden="true" className="size-4" />
               </Link>
               <Link
                 className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 px-5 text-sm font-black text-white transition hover:bg-white/10"
                 href="/register"
               >
-                Create account
+                {common("createAccount")}
               </Link>
             </div>
           </div>
@@ -90,25 +93,27 @@ export function Footer() {
               </p>
               <p className="flex items-center gap-3">
                 <MapPin aria-hidden="true" className="size-4 text-red-200" />
-                Performance parts marketplace
+                {t("location")}
               </p>
             </div>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-3">
             {footerLinks.map((group) => (
-              <div key={group.title}>
+              <div key={group.titleKey}>
                 <h3 className="text-sm font-black uppercase tracking-[0.16em] text-white">
-                  {group.title}
+                  {t(group.titleKey)}
                 </h3>
                 <ul className="mt-4 grid gap-3">
                   {group.links.map((link) => (
-                    <li key={`${group.title}-${link.label}`}>
+                    <li key={`${group.titleKey}-${link.labelKey}`}>
                       <Link
                         className="text-sm font-semibold text-zinc-300 transition hover:text-white"
                         href={link.href}
                       >
-                        {link.label}
+                        {link.namespace === "Common"
+                          ? common(link.labelKey)
+                          : t(link.labelKey)}
                       </Link>
                     </li>
                   ))}
@@ -119,16 +124,16 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-4 border-t border-white/15 pt-6 text-sm font-semibold text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Car Tuning Shop. All rights reserved.</p>
+          <p>{t("copyright")}</p>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link className="transition hover:text-white" href="/products">
-              Catalog
+              {t("catalog")}
             </Link>
             <Link className="transition hover:text-white" href="/cart">
-              Cart
+              {common("cart")}
             </Link>
             <Link className="transition hover:text-white" href="/checkout">
-              Orders
+              {t("orders")}
             </Link>
           </div>
         </div>

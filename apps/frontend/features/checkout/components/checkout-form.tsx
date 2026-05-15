@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -34,6 +35,9 @@ function getErrorMessage(error: unknown) {
 }
 
 export function CheckoutForm() {
+  const cart = useTranslations("Cart");
+  const common = useTranslations("Common");
+  const t = useTranslations("Checkout");
   const router = useRouter();
   const [hasLoadedCart, setHasLoadedCart] = useState(false);
   const { user } = useAuthStore();
@@ -69,7 +73,7 @@ export function CheckoutForm() {
 
   async function onSubmit(values: CheckoutFormValues) {
     if (items.length === 0) {
-      toast.error("Your cart is empty");
+      toast.error(t("emptyCart"));
       router.replace("/cart");
       return;
     }
@@ -78,7 +82,7 @@ export function CheckoutForm() {
       const order = await createOrder(values);
 
       clearCart();
-      toast.success("Order created");
+      toast.success(t("created"));
       router.replace(`/orders/success?orderId=${order.id}`);
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -88,11 +92,11 @@ export function CheckoutForm() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
       <form className="auto-card rounded-lg p-5" onSubmit={handleSubmit(onSubmit)}>
-        <h2 className="text-xl font-black text-white">Delivery details</h2>
+        <h2 className="text-xl font-black text-white">{t("deliveryDetails")}</h2>
         <div className="mt-5 space-y-4">
           <label className="block">
             <span className="text-sm font-bold text-zinc-300">
-              Customer name
+              {common("customerName")}
             </span>
             <input
               className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
@@ -108,7 +112,7 @@ export function CheckoutForm() {
 
           <label className="block">
             <span className="text-sm font-bold text-zinc-300">
-              Phone number
+              {common("phoneNumber")}
             </span>
             <input
               className="auto-input mt-2 w-full rounded-md px-3 py-2 text-sm"
@@ -123,7 +127,9 @@ export function CheckoutForm() {
           </label>
 
           <label className="block">
-            <span className="text-sm font-bold text-zinc-300">Address</span>
+            <span className="text-sm font-bold text-zinc-300">
+              {common("address")}
+            </span>
             <textarea
               className="auto-input mt-2 min-h-32 w-full rounded-md px-3 py-2 text-sm"
               {...register("address")}
@@ -141,26 +147,26 @@ export function CheckoutForm() {
           disabled={isSubmitting || isLoading || !hasLoadedCart || items.length === 0}
           type="submit"
         >
-          {isSubmitting ? "Creating order..." : "Create order"}
+          {isSubmitting ? t("creating") : t("createOrder")}
         </button>
       </form>
 
       <aside className="auto-card rounded-lg p-5 lg:sticky lg:top-24">
-        <h2 className="text-lg font-black text-white">Checkout summary</h2>
+        <h2 className="text-lg font-black text-white">{t("summary")}</h2>
         {isLoading || !hasLoadedCart ? (
           <div className="mt-5 h-32 animate-pulse rounded-md bg-white/10" />
         ) : (
           <div className="mt-4 space-y-3 text-sm">
             <div className="flex justify-between gap-4 text-zinc-400">
-              <span>Items</span>
+              <span>{cart("items")}</span>
               <span className="font-semibold">{totalItems}</span>
             </div>
             <div className="flex justify-between gap-4 text-zinc-400">
-              <span>Subtotal</span>
+              <span>{cart("subtotal")}</span>
               <span className="font-semibold">{formatCartPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between gap-4 border-t border-white/10 pt-3 text-base font-black text-white">
-              <span>Total</span>
+              <span>{common("total")}</span>
               <span>{formatCartPrice(subtotal)}</span>
             </div>
           </div>

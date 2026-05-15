@@ -6,6 +6,7 @@ import type {
   Product,
 } from "@/features/products/product.types";
 import { ProductGrid } from "@/features/products/components/product-grid";
+import { useTranslations } from "next-intl";
 
 type RelatedProductsProps = {
   brands: Brand[];
@@ -18,15 +19,17 @@ export function RelatedProducts({
   categories,
   products,
 }: RelatedProductsProps) {
+  const t = useTranslations("ProductDetail");
+
   return (
     <section className="mt-12">
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-red-300">
-            More parts
+            {t("moreParts")}
           </p>
           <h2 className="mt-2 text-2xl font-black text-white">
-            Related products
+            {t("related")}
           </h2>
         </div>
       </div>
@@ -35,7 +38,7 @@ export function RelatedProducts({
         <ProductGrid brands={brands} categories={categories} products={products} />
       ) : (
         <div className="auto-card rounded-lg p-6 text-sm text-zinc-400">
-          No related products found.
+          {t("noRelated")}
         </div>
       )}
     </section>

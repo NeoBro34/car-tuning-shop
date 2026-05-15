@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ShoppingCart } from "lucide-react";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import type {
   Brand,
@@ -21,6 +22,8 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product, category, brand }: ProductCardProps) {
+  const common = useTranslations("Common");
+  const t = useTranslations("Products");
   const mainImage =
     product.images.find((image) => image.is_main) ?? product.images[0];
   const activePrice = product.discount_price ?? product.price;
@@ -35,9 +38,9 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
 
     try {
       await addItem(product, 1);
-      toast.success("Product added to cart");
+      toast.success(t("added"));
     } catch {
-      toast.error("Could not add product to cart");
+      toast.error(t("addError"));
     }
   }
 
@@ -56,7 +59,7 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
           />
         ) : (
           <span className="px-4 text-center text-sm font-semibold text-zinc-500">
-            Product image
+            {t("productImage")}
           </span>
         )}
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
@@ -72,17 +75,17 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
                 : "bg-emerald-400 text-zinc-950"
             }`}
           >
-            {isOutOfStock ? "Out" : "In stock"}
+            {isOutOfStock ? t("out") : common("inStock")}
           </span>
         </div>
       </Link>
       <div className="flex flex-1 flex-col p-4">
         <div className="flex flex-wrap gap-2 text-xs font-bold text-zinc-400">
           <span className="rounded bg-white/[0.06] px-2 py-1">
-            {category?.name ?? `Category #${product.category_id}`}
+            {category?.name ?? `${common("category")} #${product.category_id}`}
           </span>
           <span className="rounded bg-white/[0.06] px-2 py-1">
-            {brand?.name ?? `Brand #${product.brand_id}`}
+            {brand?.name ?? `${common("brand")} #${product.brand_id}`}
           </span>
         </div>
         <Link
@@ -106,7 +109,7 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
             ) : null}
           </div>
           <p className="text-sm font-bold text-zinc-400">
-            {product.stock_quantity} left
+            {t("left", { count: product.stock_quantity })}
           </p>
         </div>
         <button
@@ -116,7 +119,7 @@ export function ProductCard({ product, category, brand }: ProductCardProps) {
           type="button"
         >
           <ShoppingCart className="size-4" />
-          {isOutOfStock ? "Out of stock" : "Add to cart"}
+          {isOutOfStock ? t("outOfStock") : common("addToCart")}
         </button>
       </div>
     </article>

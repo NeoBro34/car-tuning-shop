@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 type PaginationProps = {
   currentPage: number;
   pageSize: number;
@@ -13,6 +15,7 @@ export function Pagination({
   total,
   onPageChange,
 }: PaginationProps) {
+  const t = useTranslations("Products");
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const canGoPrevious = currentPage > 1;
   const canGoNext = currentPage < totalPages;
@@ -23,8 +26,7 @@ export function Pagination({
       className="flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between"
     >
       <p className="text-sm text-zinc-400">
-        Page <span className="font-semibold">{currentPage}</span> of{" "}
-        <span className="font-semibold">{totalPages}</span>
+        {t("pageOf", { page: currentPage, total: totalPages })}
       </p>
       <div className="flex gap-2">
         <button
@@ -33,7 +35,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage - 1)}
           type="button"
         >
-          Previous
+          {t("previous")}
         </button>
         <button
           className="btn-secondary min-w-24 disabled:cursor-not-allowed disabled:opacity-50"
@@ -41,7 +43,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           type="button"
         >
-          Next
+          {t("next")}
         </button>
       </div>
     </nav>

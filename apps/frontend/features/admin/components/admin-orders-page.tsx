@@ -1,6 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,8 @@ const statuses: OrderStatus[] = [
 ];
 
 export function AdminOrdersPage() {
+  const admin = useTranslations("Admin");
+  const common = useTranslations("Common");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -37,7 +40,7 @@ export function AdminOrdersPage() {
 
       setOrders(response.items);
     } catch {
-      setError("Orders could not be loaded.");
+      setError(admin("ordersError"));
     } finally {
       setIsLoading(false);
     }
@@ -61,23 +64,23 @@ export function AdminOrdersPage() {
       setSelectedOrder((current) =>
         current?.id === updated.id ? updated : current,
       );
-      toast.success("Order status updated");
+      toast.success(admin("statusUpdated"));
     } catch {
       setOrders(previous);
-      toast.error("Could not update order status");
+      toast.error(admin("statusError"));
     }
   }
 
   const columns = useMemo<ColumnDef<Order>[]>(
     () => [
-      { accessorKey: "id", header: "Order" },
-      { accessorKey: "customer_name", header: "Customer" },
+      { accessorKey: "id", header: admin("order") },
+      { accessorKey: "customer_name", header: admin("customer") },
       {
-        header: "Total",
+        header: common("total"),
         cell: ({ row }) => formatCartPrice(row.original.total_price),
       },
       {
-        header: "Status",
+        header: admin("status"),
         cell: ({ row }) => (
           <Select
             onChange={(event) =>
@@ -94,18 +97,18 @@ export function AdminOrdersPage() {
         ),
       },
       {
-        header: "Created",
+        header: admin("created"),
         cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString(),
       },
       {
-        header: "Actions",
+        header: common("actions"),
         cell: ({ row }) => (
           <Button
             onClick={() => setSelectedOrder(row.original)}
             type="button"
             variant="secondary"
           >
-            Detail
+            {admin("detail")}
           </Button>
         ),
       },
@@ -117,7 +120,7 @@ export function AdminOrdersPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-black text-white">Orders</h2>
+          <h2 className="text-lg font-black text-white">{admin("orders")}</h2>
         </CardHeader>
         <CardContent>
           {isLoading ? <div className="h-64 animate-pulse rounded-md bg-white/10" /> : null}
@@ -127,7 +130,7 @@ export function AdminOrdersPage() {
             </div>
           ) : null}
           {!isLoading && !error ? (
-            <AdminDataTable columns={columns} data={orders} emptyLabel="No orders found." />
+            <AdminDataTable columns={columns} data={orders} emptyLabel={admin("noOrders")} />
           ) : null}
         </CardContent>
       </Card>
@@ -136,34 +139,34 @@ export function AdminOrdersPage() {
         <Card>
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-black text-white">
-              Order #{selectedOrder.id}
+              {admin("order")} #{selectedOrder.id}
             </h2>
             <Button
               onClick={() => setSelectedOrder(null)}
               type="button"
               variant="ghost"
             >
-              Close
+              {common("close")}
             </Button>
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-zinc-300">
             <div className="grid gap-3 sm:grid-cols-2">
               <p>
-                <span className="font-bold">Customer:</span>{" "}
+                <span className="font-bold">{admin("customer")}:</span>{" "}
                 {selectedOrder.customer_name}
               </p>
               <p>
-                <span className="font-bold">Phone:</span>{" "}
+                <span className="font-bold">{common("phoneNumber")}:</span>{" "}
                 {selectedOrder.phone_number}
               </p>
               <p className="sm:col-span-2">
-                <span className="font-bold">Address:</span> {selectedOrder.address}
+                <span className="font-bold">{common("address")}:</span> {selectedOrder.address}
               </p>
               <p>
-                <span className="font-bold">Status:</span> {selectedOrder.status}
+                <span className="font-bold">{admin("status")}:</span> {selectedOrder.status}
               </p>
               <p>
-                <span className="font-bold">Total:</span>{" "}
+                <span className="font-bold">{common("total")}:</span>{" "}
                 {formatCartPrice(selectedOrder.total_price)}
               </p>
             </div>
@@ -173,7 +176,7 @@ export function AdminOrdersPage() {
                   className="flex justify-between gap-4 border-b border-white/10 p-3 last:border-b-0"
                   key={item.id}
                 >
-                  <span>Product #{item.product_id} x {item.quantity}</span>
+                  <span>{common("product")} #{item.product_id} x {item.quantity}</span>
                   <span className="font-bold">{formatCartPrice(item.subtotal)}</span>
                 </div>
               ))}
